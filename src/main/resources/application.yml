@@ -1,0 +1,25 @@
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /coffeePlace
+      settings:
+        trace: false
+        web-allow-others: false
+  datasource:
+    url: jdbc:h2:mem:coffeePlace;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: bestCoffeeEver
+    password: bestCoffeeEver
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        use_sql_comments: true
+        format_sql: true
+    defer-datasource-initialization: true
+
+server:
+  port: 8083
