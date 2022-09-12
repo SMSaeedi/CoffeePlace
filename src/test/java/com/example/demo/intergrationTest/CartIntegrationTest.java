@@ -1,11 +1,13 @@
 package com.example.demo.intergrationTest;
 
+import com.example.demo.controller.CartController;
+import com.example.demo.dao.repository.CartRepository;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -13,13 +15,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.nio.charset.Charset;
 
-@SpringBootTest
-@WebMvcTest
+@WebMvcTest(CartController.class)
 @AutoConfigureMockMvc
 public class CartIntegrationTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@MockBean
+	private CartRepository carts;
 
 	@Test
 	public void whenCreateCartWithUserIdAndProductId_thenCorrectResponse() throws Exception {

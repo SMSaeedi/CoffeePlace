@@ -1,5 +1,6 @@
 package com.example.demo.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,6 +36,14 @@ public class ExceptionTranslator {
         return ServiceExceptionResponse.builder()
                 .timestamp(new Date())
                 .details(ex.getMessage())
+                .build();
+    }
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ServiceExceptionResponse handleValidationExceptions(DataIntegrityViolationException ex) {
+        return ServiceExceptionResponse.builder()
+                .timestamp(new Date())
+                .details(ex.getCause().getMessage() + "; bCoz this product is already added into cart; for changing, do update it!")
                 .build();
     }
 }

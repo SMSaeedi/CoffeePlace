@@ -11,14 +11,12 @@ import com.example.demo.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
 public class CartServiceImpl implements CartService {
 
-    public static boolean toppingBonus;
-    public static boolean discount;
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final ProductService productService;
@@ -33,15 +31,15 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDto getCartByToken(int token) {
-        return mapper.convertValue(cartRepository.findByCustomerId(token).orElseThrow(() -> new NotFoundException("No such cart found!")), CartDto.class);
+        return mapper.convertValue(findCartByCustomerId(token), CartDto.class);
     }
 
     @Override
     public CartDto addCart(int token, int productId) {
         Cart cart = cartRepository.findByCustomerId(token)
-                .orElse(cartRepository.save(Cart.builder()
+                .orElseGet(() ->  cartRepository.save(Cart.builder()
                         .customerId(token)
-                        .items(new HashSet<>())
+                        .items(new ArrayList<>())
                         .build()));
 
         CartItem newItem = cartItemRepository.save(CartItem.builder()
@@ -58,20 +56,33 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDto updateCart(int token, int productId, int quantity) {
-        Optional<Cart> cart = cartRepository.findByCustomerId(token);
+        Cart cart = findCartByCustomerId(token);
 
-        cart.get().getItems().forEach(cartItem -> {
-            if (cartItem.getProduct().getId().equals(productId))
-                cartItem.setQuantity(quantity);
-        });
+        CartItem item = cart.getItems().stream().filter(cartItem -> cartItem.getProduct().getId().equals(productId)).findFirst()
+                .orElseThrow(() -> new NotFoundException("Cart item not found!"));
 
-        Cart updatedCart = cartRepository.save(cart.get());
+        cart.getItems().remove(item);
+
+        if (quantity != 0) {
+            item.setQuantity(quantity);
+            cart.getItems().add(item);
+        }
+
+        Cart updatedCart = cartRepository.save(cart);
 
         return mapper.convertValue(updatedCart, CartDto.class);
     }
 
+    private Cart findCartByCustomerId(int token) {
+        return cartRepository.findByCustomerId(token).orElseThrow(() -> new NotFoundException("No such cart found!"));
+    }
+
     @Override
-    public void deleteCart(int cartId) {
-        cartRepository.deleteById(cartId);
+    public void deleteCart(int token, int cartId) {
+        Optional<Cart> cartByCustomerId = cartRepository.findByCustomerId(token);
+
+        if (cartByCustomerId.isPresent())
+            cartRepository.deleteById(cartId);
+        cartByCustomerId.orElseThrow(() -> new NotFoundException("No cart found for deleting!"));
     }
 }

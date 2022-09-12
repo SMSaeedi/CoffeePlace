@@ -30,4 +30,8 @@ public class ProductServiceImpl implements ProductService {
     public Product getProductById(int productId) {
         return productRepository.findById(productId).orElseThrow(() -> new NotFoundException("No such product found!"));
     }
+
+    public void removeProduct(int productId) {
+        productRepository.deleteById(productId);
+    }
 }

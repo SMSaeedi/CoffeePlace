@@ -6,14 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "cart")
+@Table(name = "cart", uniqueConstraints = {@UniqueConstraint(columnNames = "customerId")})
 public class Cart {
 
     @Id
@@ -21,7 +21,7 @@ public class Cart {
     private Integer id;
 
     @OneToMany
-    private Set<CartItem> items;
+    private List<CartItem> items;
 
     private Integer customerId;
 }
