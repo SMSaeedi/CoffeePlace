@@ -4,7 +4,6 @@ import com.example.demo.dao.entity.Customer;
 import com.example.demo.dao.repository.CustomerRepository;
 import com.example.demo.dto.CustomerDto;
 import com.example.demo.dto.TokenDto;
-import com.example.demo.exception.NotFoundException;
 import com.example.demo.service.impl.CustomerServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +21,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,9 +38,9 @@ public class CustomerServiceTest {
 
     private List<Customer> customers() {
         List<Customer> list = new ArrayList<>();
-        Customer empOne = new Customer(sequenceId(), "Mahsa Saeedi", "mahsasaeedy@gmail.com");
-        Customer empTwo = new Customer(sequenceId(), "Alex Veldaviny", "alexk@yahoo.com");
-        Customer empThree = new Customer(sequenceId(), "Steve Martiny", "swaugh@gmail.com");
+        Customer empOne = new Customer(sequenceId(), "Mahsa Saeedi", "mahsasaeedy@gmail.com","Nr.50, Azadi St. Azadi Avenue");
+        Customer empTwo = new Customer(sequenceId(), "Alex Veldaviny", "alexk@yahoo.com","Nr.51, Azadi St. Azadi Avenue");
+        Customer empThree = new Customer(sequenceId(), "Steve Martiny", "swaugh@gmail.com","Nr.52, Azadi St. Azadi Avenue");
 
         list.add(empOne);
         list.add(empTwo);
@@ -56,7 +53,7 @@ public class CustomerServiceTest {
         for (Customer c : customers())
             return c;
 
-        return new Customer(sequenceId(), "Nina Mirzaee", "nina_m@email.com");
+        return new Customer(sequenceId(), "Nina Mirzaee", "nina_m@email.com","Nr.48, Azadi St. Azadi Avenue");
     }
 
     private int sequenceId() {

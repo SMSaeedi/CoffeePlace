@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -24,6 +25,7 @@ public class Product implements Serializable {
     private Integer id;
 
     @NotEmpty(message = "name is not filled")
+    @Length(min = 3, max = 20)
     private String name;
 
     @NotEmpty(message = "name is not filled")

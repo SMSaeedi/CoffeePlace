@@ -29,9 +29,9 @@ public class CustomerControllerTest {
 
     private List<Customer> customers() {
         List<Customer> list = new ArrayList<>();
-        Customer empOne = new Customer(sequenceId(), "Mahsa Saeedi", "mahsasaeedy@gmail.com");
-        Customer empTwo = new Customer(sequenceId(), "Alex Veldaviny", "alexk@yahoo.com");
-        Customer empThree = new Customer(sequenceId(), "Steve Martiny", "swaugh@gmail.com");
+        Customer empOne = new Customer(sequenceId(), "Mahsa Saeedi", "mahsasaeedy@gmail.com","Nr.49, Azadi St. Azadi Avenue");
+        Customer empTwo = new Customer(sequenceId(), "Alex Veldaviny", "alexk@yahoo.com","Nr.50, Azadi St. Azadi Avenue");
+        Customer empThree = new Customer(sequenceId(), "Steve Martiny", "swaugh@gmail.com","Nr.51, Azadi St. Azadi Avenue");
 
         list.add(empOne);
         list.add(empTwo);
@@ -44,7 +44,7 @@ public class CustomerControllerTest {
         for (Customer c : customers())
             return c;
 
-        return new Customer(sequenceId(), "Nina Mirzaee", "nina_m@email.com");
+        return new Customer(sequenceId(), "Nina Mirzaee", "nina_m@email.com","Nr.48, Azadi St. Azadi Avenue");
     }
 
     private int sequenceId() {

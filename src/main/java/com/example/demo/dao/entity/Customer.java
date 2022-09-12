@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -22,10 +23,15 @@ public class Customer implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotEmpty(message = "name is mandatory")
+    @NotEmpty(message = "fullName is mandatory")
+    @Length(min = 3, max = 15)
     private String name;
 
     @NotEmpty(message = "email is mandatory")
     @Email(message = "email must be a valid email address")
     private String email;
+
+    @NotEmpty(message = "postAddress is mandatory")
+    @Length(min = 15, max = 350)
+    private String postalAddress;
 }

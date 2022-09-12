@@ -1,5 +1,6 @@
 package com.example.demo.dao.entity;
 
+import com.example.demo.enums.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,18 +11,18 @@ import java.io.Serializable;
 
 @Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-@Table(name = "cartItem")
-public class CartItem  implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "order")
+public class Order implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @OneToOne
-    private Product product;
+    private Cart cart;
 
-    private Integer quantity = 0;
+    private OrderStatus orderStatus;
 }

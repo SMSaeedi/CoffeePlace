@@ -59,14 +59,16 @@ public class CartServiceImpl implements CartService {
         Cart cart = findCartByCustomerId(token);
 
         CartItem item = cart.getItems().stream().filter(cartItem -> cartItem.getProduct().getId().equals(productId)).findFirst()
-                .orElseThrow(() -> new NotFoundException("Cart item not found!"));
+                .orElse(cartItemRepository.save(CartItem.builder()
+                        .product(productService.getProductById(productId))
+                        .quantity(quantity)
+                        .build()));
 
-        cart.getItems().remove(item);
 
-        if (quantity != 0) {
-            item.setQuantity(quantity);
+        if (quantity == 0)
+            cart.getItems().remove(item);
+        else if (quantity != 0)
             cart.getItems().add(item);
-        }
 
         Cart updatedCart = cartRepository.save(cart);
 
