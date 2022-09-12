@@ -14,21 +14,42 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
-    private final ObjectMapper modelMapper;
+    private final ObjectMapper mapper;
 
     public ProductServiceImpl(ProductRepository product, ObjectMapper modelMapper) {
         this.productRepository = product;
-        this.modelMapper = modelMapper;
+        this.mapper = modelMapper;
     }
 
     @Override
     public List<ProductDto> getProduct() {
-        return modelMapper.convertValue(productRepository.findAll(), List.class);
+        return mapper.convertValue(productRepository.findAll(), List.class);
     }
 
 
     public Product getProductById(int productId) {
         return productRepository.findById(productId).orElseThrow(() -> new NotFoundException("No such product found!"));
+    }
+
+    @Override
+    public ProductDto newProduct(ProductDto productDto) {
+        Product newProduct = Product.builder()
+                .name(productDto.getName())
+                .type(productDto.getType())
+                .price(productDto.getPrice())
+                .build();
+        return mapper.convertValue(productRepository.save(newProduct), ProductDto.class);
+    }
+
+    @Override
+    public ProductDto updateProduct(int productId, ProductDto productDto) {
+        Product productById = getProductById(productId);
+        Product newProduct = productById.builder()
+                .name(productDto.getName())
+                .type(productDto.getType())
+                .price(productDto.getPrice())
+                .build();
+        return mapper.convertValue(productRepository.save(newProduct), ProductDto.class);
     }
 
     public void removeProduct(int productId) {

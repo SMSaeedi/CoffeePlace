@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "product")
+@Table(name = "product", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class Product implements Serializable {
 
     @Id

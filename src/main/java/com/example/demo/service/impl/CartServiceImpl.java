@@ -35,7 +35,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartDto addCart(int token, int productId) {
+    public CartDto newCart(int token, int productId) {
         Cart cart = cartRepository.findByCustomerId(token)
                 .orElseGet(() ->  cartRepository.save(Cart.builder()
                         .customerId(token)

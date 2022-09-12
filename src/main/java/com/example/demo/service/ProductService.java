@@ -9,4 +9,7 @@ public interface ProductService {
     List<ProductDto> getProduct();
 
     Product getProductById(int productId);
+    ProductDto newProduct(ProductDto productDto);
+    ProductDto updateProduct(int productId, ProductDto productDto);
+    void removeProduct(int productId);
 }

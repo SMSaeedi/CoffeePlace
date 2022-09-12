@@ -20,21 +20,21 @@ public class CartController {
         return cartService.getCartByToken(token);
     }
 
-    @PostMapping("/add/{productId}")
+    @PostMapping("/{productId}")
     @ResponseStatus(HttpStatus.CREATED)
-    CartDto addCart(@RequestHeader int token,
+    CartDto newCart(@RequestHeader int token,
                     @PathVariable int productId) {
-        return cartService.addCart(token, productId);
+        return cartService.newCart(token, productId);
     }
 
-    @PutMapping("/update/{productId}/{quantity}")
+    @PutMapping("/{productId}/{quantity}")
     CartDto updateCart(@RequestHeader int token,
                        @PathVariable int productId,
                        @PathVariable int quantity) {
         return cartService.updateCart(token, productId, quantity);
     }
 
-    @DeleteMapping("/remove/{cartId}")
+    @DeleteMapping("/{cartId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void removeCart(@RequestHeader int token,
                     @PathVariable Integer cartId) {

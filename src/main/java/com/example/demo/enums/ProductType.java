@@ -2,7 +2,8 @@ package com.example.demo.enums;
 
 public enum ProductType {
     COFFEE(0, "COFFEE"),
-    TOPPINGS(1, "TOPPINGS");
+    TOPPINGS(1, "TOPPINGS"),
+    TEA(2, "TEA");
 
     private final int code;
     private final String name;

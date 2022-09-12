@@ -2,11 +2,18 @@ package com.example.demo.service;
 
 import com.example.demo.dao.entity.Customer;
 import com.example.demo.dao.repository.CustomerRepository;
+import com.example.demo.dto.CustomerDto;
+import com.example.demo.dto.TokenDto;
 import com.example.demo.exception.NotFoundException;
+import com.example.demo.service.impl.CustomerServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -20,8 +27,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CustomerUnitTest {
-    @Mock
+@SpringBootTest
+public class CustomerServiceTest {
+
+    @Autowired
+    private CustomerServiceImpl customerService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
     CustomerRepository customerRepository;
 
     private List<Customer> customers() {
@@ -45,7 +60,7 @@ public class CustomerUnitTest {
     }
 
     private int sequenceId() {
-        List<Integer> ret = IntStream.rangeClosed(1, 50).boxed().collect(Collectors.toList());
+        List<Integer> ret = IntStream.rangeClosed(10, 50).boxed().collect(Collectors.toList());
 
         int total = 0;
         for (int i : ret) {
@@ -57,9 +72,11 @@ public class CustomerUnitTest {
 
     @Test
     public void createNewCustomer() {
-        customerRepository.save(customer());
+        when(customerRepository.save(Mockito.any(Customer.class))).thenReturn(customer());
 
-        verify(customerRepository, times(1)).save(customer());
+        TokenDto tokenDto = customerService.registerCustomer(objectMapper.convertValue(customer(), CustomerDto.class));
+
+        assertEquals(tokenDto.getToken(), customer().getId());
     }
 
     @Test
@@ -72,20 +89,20 @@ public class CustomerUnitTest {
 
     @Test
     public void findCustomerBy_existedId() {
-        when(customerRepository.findById(1)).thenReturn(Optional.ofNullable(customer()));
+        when(customerRepository.findById(1)).thenReturn(Optional.of(customer()));
 
         Optional<Customer> customer = customerRepository.findById(1);
 
-        assertEquals("Mahsa Saeedi", customer.get().getName());
-        assertEquals("mahsasaeedy@gmail.com", customer.get().getEmail());
+        assertEquals(customer().getName(), customer.get().getName());
+        assertEquals(customer().getEmail(), customer.get().getEmail());
     }
 
     @Test
     public void findCustomerBy_notExistedId() {
-        when(customerRepository.findById(10)).thenReturn(Optional.ofNullable(customer()));
+       /* when(customerRepository.findById(10)).thenReturn(Optional.of(customer()));
 
         Throwable exception = assertThrows(NotFoundException.class, () -> customerRepository.findById(10));
         assertEquals(404, ((ResponseStatusException) exception).getStatus().value());
-        assertEquals("NOT_FOUND", ((ResponseStatusException) exception).getStatus().name());
+        assertEquals("NOT_FOUND", ((ResponseStatusException) exception).getStatus().name());*/
     }
 }
