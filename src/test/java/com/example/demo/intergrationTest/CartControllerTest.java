@@ -94,6 +94,14 @@ public class CartControllerTest {
 
 	@Test
 	public void createCartForTheSameCustomer_throwsUniqueConstraintException() throws Exception {
+//		when(cartRepository.save(Mockito.any(Cart.class))).thenReturn(cartsModel());
+//        when(cartItemRepository.save(getItems().get(0))).thenReturn(getItems().get(0));
+//        when(productService.getProductById(getProducts().get(0).getId())).thenReturn(getProducts().get(0));
+//
+//        CartDto cartDto = cartService.addCart(0, cartsModel().getItems().get(0).getProduct().getId());
+//
+//        when(cartDto).thenThrow(new NotFoundException("cart already added for the customer!"));
+//        doThrow(new NotFoundException("no cart found!")).when(cartDto);
 		when(cartRepository.save(cartsModel())).thenReturn(cartsModel());
 
 		mockMvc.perform(post("/api/carts")

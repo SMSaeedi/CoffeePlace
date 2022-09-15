@@ -19,7 +19,6 @@ import java.math.BigDecimal;
 @Builder
 @Table(name = "product", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class Product implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -28,9 +27,9 @@ public class Product implements Serializable {
     @Length(min = 3, max = 20)
     private String name;
 
-    @NotEmpty(message = "name is not filled")
+    @NotEmpty(message = "type is not filled")
     private ProductType type;
 
-    @NotEmpty(message = "name is not filled")
+    @NotEmpty(message = "price is not filled")
     private BigDecimal price;
 }

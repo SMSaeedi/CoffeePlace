@@ -1,15 +1,15 @@
 package com.example.demo.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
-import java.math.BigDecimal;
-import java.util.List;
+import lombok.NoArgsConstructor;
+import java.util.Set;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CartDto {
-    private BigDecimal totalPrice;
-    private String description;
-    private List<CartItemDto> items;
+    private Set<CartItemDto> items;
 }

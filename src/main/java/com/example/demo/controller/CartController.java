@@ -22,9 +22,9 @@ public class CartController {
 
     @PostMapping("/{productId}")
     @ResponseStatus(HttpStatus.CREATED)
-    CartDto newCart(@RequestHeader int token,
+    CartDto addCart(@RequestHeader int token,
                     @PathVariable int productId) {
-        return cartService.newCart(token, productId);
+        return cartService.addCart(token, productId);
     }
 
     @PutMapping("/{productId}/{quantity}")

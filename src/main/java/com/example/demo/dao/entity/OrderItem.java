@@ -6,15 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-@Table(name = "cartItem")
-public class CartItem  implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "orderItem")
+public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -22,4 +22,5 @@ public class CartItem  implements Serializable {
     @OneToOne
     private Product product;
     private Integer quantity;
+    private BigDecimal amount;
 }

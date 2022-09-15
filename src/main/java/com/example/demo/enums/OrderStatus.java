@@ -1,9 +1,10 @@
 package com.example.demo.enums;
 
 public enum OrderStatus {
-    ON_THE_WAY(0, "ON_THE_WAY"),
-    DELIVERED(1, "DELIVERED"),
-    CANCELED(2, "CANCELED");
+    REGISTERED(0, "REGISTERED"),
+    ON_THE_WAY(1, "ON_THE_WAY"),
+    DELIVERED(2, "DELIVERED"),
+    CANCELED(3, "CANCELED");
 
     private final int code;
     private final String name;

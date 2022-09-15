@@ -16,14 +16,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "customer", uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
+@Table(name = "customer", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 public class Customer implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotEmpty(message = "fullName is mandatory")
+    @NotEmpty(message = "name is mandatory")
     @Length(min = 3, max = 15)
     private String name;
 
@@ -32,6 +31,6 @@ public class Customer implements Serializable {
     private String email;
 
     @NotEmpty(message = "postAddress is mandatory")
-    @Length(min = 15, max = 350)
+    @Length(min = 10, max = 350)
     private String postalAddress;
 }

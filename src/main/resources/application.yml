@@ -1,3 +1,4 @@
+#DataBase config
 spring:
   h2:
     console:
@@ -21,5 +22,19 @@ spring:
         format_sql: true
     defer-datasource-initialization: true
 
+#Service port
 server:
-  port: 8083
+  port: 8085
+
+#Other namings
+service:
+  order:
+    impl:
+      descTopping: Congrats! one of your toppings has become a gift
+      descDiscount: Congrats! 25% discount has appended
+      exception:
+        orderNotFound: No such order found!
+  cart:
+    impl:
+      exception:
+        cartNotFound: No such cart found!

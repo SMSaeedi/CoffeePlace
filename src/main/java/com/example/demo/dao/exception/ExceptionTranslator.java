@@ -1,4 +1,4 @@
-package com.example.demo.exception;
+package com.example.demo.dao.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -38,6 +38,7 @@ public class ExceptionTranslator {
                 .details(ex.getMessage())
                 .build();
     }
+
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ServiceExceptionResponse handleValidationExceptions(DataIntegrityViolationException ex) {
