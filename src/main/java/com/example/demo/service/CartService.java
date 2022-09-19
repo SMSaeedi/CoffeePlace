@@ -6,7 +6,7 @@ public interface CartService {
     CartDto getCartByToken(int token);
     CartDto addCart(int token, int productId);
 
-    CartDto updateCart(int token, int productId, int quantity);
+    CartDto updateCart(int token,int cartItemId, int productId, int quantity);
 
     void deleteCart(int token, int cartId);
 }

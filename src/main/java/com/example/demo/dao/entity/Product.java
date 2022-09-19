@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 public class Product implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
     private Integer id;
 
     @NotEmpty(message = "name is not filled")

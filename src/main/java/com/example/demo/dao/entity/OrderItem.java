@@ -17,10 +17,14 @@ import java.math.BigDecimal;
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
     private Integer id;
 
     @OneToOne
     private Product product;
     private Integer quantity;
     private BigDecimal amount;
+
+    @ManyToOne
+    private CustomerOrder customerOrder;
 }

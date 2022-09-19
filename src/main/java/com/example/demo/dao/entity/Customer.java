@@ -20,6 +20,7 @@ import java.io.Serializable;
 public class Customer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
     private Integer id;
 
     @NotEmpty(message = "name is mandatory")

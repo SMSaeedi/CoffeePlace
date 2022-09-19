@@ -1,4 +1,4 @@
-package com.example.demo.dao.exception;
+package com.example.demo.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;

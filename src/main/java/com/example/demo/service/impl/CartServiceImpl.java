@@ -2,10 +2,11 @@ package com.example.demo.service.impl;
 
 import com.example.demo.dao.entity.Cart;
 import com.example.demo.dao.entity.CartItem;
+import com.example.demo.dao.entity.Product;
 import com.example.demo.dao.repository.CartItemRepository;
 import com.example.demo.dao.repository.CartRepository;
 import com.example.demo.dto.CartDto;
-import com.example.demo.dao.exception.NotFoundException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.service.CartService;
 import com.example.demo.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,18 +58,19 @@ public class CartServiceImpl implements CartService {
 
         cart.getItems().add(newItem);
 
-        Cart updatedCart = cartRepository.save(cart);
+        Cart addNewItem = cartRepository.save(cart);
 
-        return mapper.convertValue(updatedCart, CartDto.class);
+        return mapper.convertValue(addNewItem, CartDto.class);
     }
 
     @Override
-    public CartDto updateCart(int token, int productId, int quantity) {
+    public CartDto updateCart(int token, int cartItemId, int productId, int quantity) {
         log.debug("updateCart ", productId);
         Cart cart = findCartByCustomerId(token);
 
-        CartItem item = cart.getItems().stream().filter(cartItem -> cartItem.getProduct().getId().equals(productId)).findFirst()
-                .orElse(cartItemRepository.save(CartItem.builder()
+        CartItem item = cart.getItems().stream().filter(cartItem -> cartItem.getId().equals(cartItemId) && cartItem.getProduct().getId().equals(productId)).findFirst()
+                .orElseGet(() -> cartItemRepository.save(CartItem.builder()
+                        .id(cartItemId)
                         .product(productService.getProductById(productId))
                         .quantity(quantity)
                         .build()));

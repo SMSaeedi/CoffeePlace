@@ -21,9 +21,10 @@ import java.util.List;
 public class CustomerOrder implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
     private Integer id;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customerOrder", cascade = CascadeType.PERSIST)
     private List<OrderItem> orderItems;
     private Integer customerId;
     private Date orderDate;

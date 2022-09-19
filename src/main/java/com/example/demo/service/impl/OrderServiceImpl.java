@@ -11,7 +11,7 @@ import com.example.demo.dto.OrderDto;
 import com.example.demo.dto.OrderItemDto;
 import com.example.demo.enums.OrderStatus;
 import com.example.demo.enums.ProductType;
-import com.example.demo.dao.exception.NotFoundException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.service.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

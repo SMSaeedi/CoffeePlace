@@ -16,7 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -69,8 +71,8 @@ public class CartControllerTest {
 		return products;
 	}
 
-	private List<CartItem> getItems() {
-		List<CartItem> cartItems = new ArrayList<>();
+	private Set<CartItem> getItems() {
+		Set<CartItem> cartItems = new HashSet<>();
 
 		cartItems.add(new CartItem(1, getProducts().get(0), 3));
 		cartItems.add(new CartItem(2, getProducts().get(1), 1));

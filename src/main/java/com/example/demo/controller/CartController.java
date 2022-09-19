@@ -27,11 +27,12 @@ public class CartController {
         return cartService.addCart(token, productId);
     }
 
-    @PutMapping("/{productId}/{quantity}")
+    @PutMapping("/{cartItemId}/{productId}/{quantity}")
     CartDto updateCart(@RequestHeader int token,
+                       @PathVariable int cartItemId,
                        @PathVariable int productId,
                        @PathVariable int quantity) {
-        return cartService.updateCart(token, productId, quantity);
+        return cartService.updateCart(token, cartItemId, productId, quantity);
     }
 
     @DeleteMapping("/{cartId}")

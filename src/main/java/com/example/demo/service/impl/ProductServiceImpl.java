@@ -6,7 +6,7 @@ import com.example.demo.dao.repository.OrderRepository;
 import com.example.demo.dao.repository.ProductRepository;
 import com.example.demo.dto.ProductDto;
 import com.example.demo.enums.ProductType;
-import com.example.demo.dao.exception.NotFoundException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
