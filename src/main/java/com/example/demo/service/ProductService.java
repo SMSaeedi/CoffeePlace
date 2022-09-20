@@ -4,6 +4,7 @@ import com.example.demo.dao.entity.Product;
 import com.example.demo.dao.repository.ProductRepository;
 import com.example.demo.dto.ProductDto;
 import com.example.demo.exception.NotFoundException;
+import com.example.demo.log.LogInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @Service
 public class ProductService {
 
@@ -28,18 +28,18 @@ public class ProductService {
     }
 
     public List<ProductDto> getProduct() {
-        log.debug("getProduct ");
+        LogInfo.logger.info("getProduct ");
         return mapper.convertValue(productRepository.findAll(), List.class);
     }
 
 
     public Product getProductById(int productId) {
-        log.debug("getProductById ", productId);
+        LogInfo.logger.info("getProductById ", productId);
         return productRepository.findById(productId).orElseThrow(() -> new NotFoundException("No such product found!"));
     }
 
     public ProductDto newProduct(ProductDto productDto) {
-        log.debug("newProduct ", productDto);
+        LogInfo.logger.info("newProduct ", productDto);
         Product newProduct = Product.builder()
                 .name(productDto.getName())
                 .type(productDto.getType())
@@ -49,7 +49,7 @@ public class ProductService {
     }
 
     public ProductDto updateProduct(int productId, ProductDto productDto) {
-        log.debug("updateProduct ", productId, productDto);
+        LogInfo.logger.info("updateProduct ", productId, productDto);
         Product productById = getProductById(productId);
         Product newProduct = productById.builder()
                 .name(productDto.getName())
@@ -60,7 +60,7 @@ public class ProductService {
     }
 
     public void removeProduct(int productId) {
-        log.debug("deleteProduct ", productId);
+        LogInfo.logger.info("deleteProduct ", productId);
         Optional<Product> productById = productRepository.findById(productId);
 
         if (productById.isPresent())

@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -7,6 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 @Data
+@Builder
 public class CustomerDto {
     @NotNull(message = "name is mandatory")
     @Length(min = 3, max = 15, message = "name length should be between 3 to 15")

@@ -1,7 +1,10 @@
 package com.example.demo.dto;
 
 import com.example.demo.enums.ProductType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
@@ -9,6 +12,9 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ProductDto {
     private int id;
 

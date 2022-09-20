@@ -18,6 +18,7 @@ public class OrderDto {
     private String description;
 
     public BigDecimal getTotalAmount() {
-        return orderDetails.stream().map(orderItemDto -> (orderItemDto.getProduct().getPrice().multiply(BigDecimal.valueOf(orderItemDto.getQuantity())))).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        return orderDetails.stream().map(orderItemDto -> (orderItemDto.getProduct().getPrice().multiply(BigDecimal.valueOf(orderItemDto.getQuantity()))))
+                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 }

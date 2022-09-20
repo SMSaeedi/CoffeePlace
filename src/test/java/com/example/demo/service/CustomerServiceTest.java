@@ -4,6 +4,7 @@ import com.example.demo.dao.entity.Customer;
 import com.example.demo.dao.repository.CustomerRepository;
 import com.example.demo.dto.CustomerDto;
 import com.example.demo.dto.TokenDto;
+import com.example.demo.exception.NotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -95,10 +98,10 @@ public class CustomerServiceTest {
 
     @Test
     public void findCustomerBy_notExistedId() {
-       /* when(customerRepository.findById(10)).thenReturn(Optional.of(customer()));
+        when(customerRepository.findById(101)).thenReturn(Optional.of(customer()));
 
-        Throwable exception = assertThrows(NotFoundException.class, () -> customerRepository.findById(10));
+        Throwable exception = assertThrows(NotFoundException.class, () -> customerRepository.findById(101));
         assertEquals(404, ((ResponseStatusException) exception).getStatus().value());
-        assertEquals("NOT_FOUND", ((ResponseStatusException) exception).getStatus().name());*/
+        assertEquals("NOT_FOUND", ((ResponseStatusException) exception).getStatus().name());
     }
 }

@@ -1,6 +1,6 @@
 package com.example.demo.model;
 
-import com.example.demo.dao.entity.Customer;
+import com.example.demo.dto.CustomerDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -27,18 +27,19 @@ public class ValidatorTests {
     @Test
     void shouldNotValidateWhenNameEmpty() {
         LocaleContextHolder.setLocale(Locale.ENGLISH);
-        Customer customer = Customer.builder()
+        CustomerDto customer = CustomerDto.builder()
                 .name("")
                 .email("invalid")
+                .postalAddress("")
                 .build();
 
         Validator validator = createValidator();
-        Set<ConstraintViolation<Customer>> constraintViolations = validator.validate(customer);
-        assertThat(constraintViolations).hasSize(2);
+        Set<ConstraintViolation<CustomerDto>> constraintViolations = validator.validate(customer);
+        assertThat(constraintViolations).hasSize(1);
 
-        List<ConstraintViolation<Customer>> list = new ArrayList<>(constraintViolations);
+        List<ConstraintViolation<CustomerDto>> list = new ArrayList<>(constraintViolations);
         int i = 0;
-        for (ConstraintViolation<Customer> c : list) {
+        for (ConstraintViolation<CustomerDto> c : list) {
             assertThat(list.get(i).getPropertyPath().toString()).isEqualTo(c.getPropertyPath().toString());
             assertThat(list.get(i).getMessage()).isEqualTo(c.getMessage());
             i++;
@@ -48,16 +49,17 @@ public class ValidatorTests {
     @Test
     void shouldNotValidateWhenEmailIncorrect() {
         LocaleContextHolder.setLocale(Locale.ENGLISH);
-        Customer customer = Customer.builder()
+        CustomerDto customer = CustomerDto.builder()
                 .name("valid")
                 .email("invalidFormat")
+                .postalAddress("nothing")
                 .build();
 
         Validator validator = createValidator();
-        Set<ConstraintViolation<Customer>> constraintViolations = validator.validate(customer);
-        assertThat(constraintViolations).hasSize(1);
+        Set<ConstraintViolation<CustomerDto>> constraintViolations = validator.validate(customer);
+        assertThat(constraintViolations).hasSize(3);
 
-        ConstraintViolation<Customer> violation = constraintViolations.iterator().next();
+        ConstraintViolation<CustomerDto> violation = constraintViolations.iterator().next();
         assertThat(violation.getPropertyPath().toString()).isEqualTo(violation.getPropertyPath().toString());
         assertThat(violation.getMessage()).isEqualTo("email must be a valid email address");
     }

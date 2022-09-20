@@ -6,15 +6,14 @@ import com.example.demo.dao.repository.CartItemRepository;
 import com.example.demo.dao.repository.CartRepository;
 import com.example.demo.dto.CartDto;
 import com.example.demo.exception.NotFoundException;
+import com.example.demo.log.LogInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Optional;
 
-@Slf4j
 @Service
 public class CartService {
 
@@ -34,12 +33,12 @@ public class CartService {
     }
 
     public CartDto getCartByCustomerId(int customerId) {
-        log.debug("getCartByToken ");
+        LogInfo.logger.info("getCartByToken ");
         return mapper.convertValue(findCartByCustomerId(customerId), CartDto.class);
     }
 
     public CartDto addCartAndItem(int token, int productId) {
-        log.debug("addCart ", productId);
+        LogInfo.logger.info("addCart ", productId);
         Cart cart = cartRepository.findByCustomerId(token)
                 .orElseGet(() -> cartRepository.save(Cart.builder()
                         .customerId(token)
@@ -59,7 +58,7 @@ public class CartService {
     }
 
     public CartDto updateCartItem(int customerId, int cartItemId, int productId, int quantity) {
-        log.debug("updateCart ", productId);
+        LogInfo.logger.info("updateCart ", productId);
         Cart cart = findCartByCustomerId(customerId);
 
 
@@ -83,12 +82,12 @@ public class CartService {
     }
 
     private Cart findCartByCustomerId(int customerId) {
-        log.debug("findCartByCustomerId ");
+        LogInfo.logger.info("findCartByCustomerId ");
         return cartRepository.findByCustomerId(customerId).orElseThrow(() -> new NotFoundException(cartNotFound));
     }
 
     public void removeCartItem(int cartItemId) {
-        log.debug("removeCartItem ", cartItemId);
+        LogInfo.logger.info("removeCartItem ", cartItemId);
         Optional<CartItem> cartItemById = cartItemRepository.findById(cartItemId);
 
         if (cartItemById.isPresent())

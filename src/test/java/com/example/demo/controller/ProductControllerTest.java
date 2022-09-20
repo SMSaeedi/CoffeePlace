@@ -1,4 +1,4 @@
-package com.example.demo.intergrationTest;
+package com.example.demo.controller;
 
 import com.example.demo.dao.entity.Product;
 import com.example.demo.dao.repository.ProductRepository;

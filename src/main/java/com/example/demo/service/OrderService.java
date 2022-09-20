@@ -12,8 +12,8 @@ import com.example.demo.dto.OrderItemDto;
 import com.example.demo.enums.OrderStatus;
 import com.example.demo.enums.ProductType;
 import com.example.demo.exception.NotFoundException;
+import com.example.demo.log.LogInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 public class OrderService {
     @Value("${service.order.descTopping}")
@@ -55,16 +54,16 @@ public class OrderService {
     }
 
     public OrderDto createOrder(int token, OrderDto request) {
-        log.debug("createOrder ", request);
+        LogInfo.logger.info("createOrder ", request);
         Cart cart = cartRepository.findByCustomerId(token).orElseThrow(() -> new NotFoundException(cartNotFound));
 
         List<OrderItem> orderItems = cart.getItems().stream().map(this::cartItemToOrderItem).collect(Collectors.toList());
-
+        OrderDto orderDto = calculateBones(request);
         Order newOrder = orderRepository.save(Order.builder()
                 .orderItems(orderItems)
                 .customerId(token)
                 .orderDate(new Date())
-                .totalAmount(calculateBones(request))
+                .totalAmount(orderDto.getTotalAmount())
                 .orderStatus(OrderStatus.REGISTERED)
                 .build());
 
@@ -80,17 +79,17 @@ public class OrderService {
     }
 
     public OrderDto getOrderByCustomerId(int customerId) {
-        log.debug("getOrderByCustomerId ");
+        LogInfo.logger.info("getOrderByCustomerId ");
         return mapper.convertValue(findOrderByCustomerId(customerId), OrderDto.class);
     }
 
     private Order findOrderByCustomerId(int customerId) {
-        log.debug("findOrderByCustomerId ");
+        LogInfo.logger.info("findOrderByCustomerId ");
         return orderRepository.findByCustomerId(customerId).orElseThrow(() -> new NotFoundException(orderNotFound));
     }
 
     public void cancelOrderItem(int orderItemId) {
-        log.debug("cancelOrderItem ");
+        LogInfo.logger.info("cancelOrderItem ");
         Optional<OrderItem> orderItemById = orderItemRepository.findById(orderItemId);
 
         if (orderItemById.isPresent())
@@ -99,7 +98,7 @@ public class OrderService {
     }
 
 
-    private BigDecimal calculateBones(OrderDto orderDto) {
+    private OrderDto calculateBones(OrderDto orderDto) {
         boolean freeTopping = false;
         BigDecimal toppingFreeAmount = BigDecimal.ZERO;
         boolean discount = false;
@@ -113,24 +112,24 @@ public class OrderService {
             freeTopping = true;
             orderDto.setTotalAmount(orderDto.getTotalAmount().subtract(minPriceToppingItem.get().getProduct().getPrice()));
             toppingFreeAmount = orderDto.getTotalAmount();
-            orderDto.setDescription(descTopping);
         }
 
         if (orderDto.getTotalAmount().compareTo(BigDecimal.valueOf(12)) >= 1) {
             discount = true;
             orderDto.getTotalAmount().subtract(orderDto.getTotalAmount().multiply(BigDecimal.valueOf(25)).divide(BigDecimal.valueOf(100)));
             discountAmount = orderDto.getTotalAmount();
-            orderDto.setDescription(descDiscount);
         }
 
         if (freeTopping && discount)
             if (discountAmount.compareTo(toppingFreeAmount) >= 1) {
                 orderDto.setTotalAmount(toppingFreeAmount);
-                return orderDto.getTotalAmount();
+                orderDto.setDescription(descTopping);
+                return orderDto;
             } else {
                 orderDto.setTotalAmount(discountAmount);
-                return orderDto.getTotalAmount();
+                orderDto.setDescription(descDiscount);
+                return orderDto;
             }
-        return orderDto.getTotalAmount();
+        return orderDto;
     }
 }
