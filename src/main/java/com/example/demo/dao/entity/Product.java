@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -21,16 +22,16 @@ import java.math.BigDecimal;
 public class Product implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
     private Integer id;
 
-    @NotEmpty(message = "name is not filled")
-    @Length(min = 3, max = 20)
+    @NotNull(message = "name is mandatory")
+    @Length(min = 3, max = 15, message = "name length should be between 3 to 15")
     private String name;
 
-    @NotEmpty(message = "type is not filled")
+    @NotNull(message = "type is mandatory")
+    @Size(min = 1, max = 1, message = "type can be either 0, 1 or 2")
     private ProductType type;
 
-    @NotEmpty(message = "price is not filled")
+    @NotNull(message = "price is mandatory")
     private BigDecimal price;
 }

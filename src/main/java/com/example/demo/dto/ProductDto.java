@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 
 @Data
 public class ProductDto {
+    private int id;
     private String name;
     private ProductType type;
     private BigDecimal price;

@@ -2,7 +2,6 @@ package com.example.demo.service.impl;
 
 import com.example.demo.dao.entity.Cart;
 import com.example.demo.dao.entity.CartItem;
-import com.example.demo.dao.entity.Product;
 import com.example.demo.dao.repository.CartItemRepository;
 import com.example.demo.dao.repository.CartRepository;
 import com.example.demo.dto.CartDto;
@@ -64,11 +63,13 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartDto updateCart(int token, int cartItemId, int productId, int quantity) {
+    public CartDto updateCartItem(int token, int cartItemId, int productId, int quantity) {
         log.debug("updateCart ", productId);
         Cart cart = findCartByCustomerId(token);
 
-        CartItem item = cart.getItems().stream().filter(cartItem -> cartItem.getId().equals(cartItemId) && cartItem.getProduct().getId().equals(productId)).findFirst()
+
+        CartItem item = cart.getItems().stream().filter(cartItem -> cartItem.getId().equals(cartItemId)
+                        && cartItem.getProduct().getId().equals(productId)).findFirst()
                 .orElseGet(() -> cartItemRepository.save(CartItem.builder()
                         .id(cartItemId)
                         .product(productService.getProductById(productId))
@@ -77,14 +78,13 @@ public class CartServiceImpl implements CartService {
 
         cart.getItems().remove(item);
 
-        if (quantity != 0) {
+        if (quantity != 0)
             item.setQuantity(quantity);
-            cart.getItems().add(item);
-        }
 
-        Cart updatedCart = cartRepository.save(cart);
+        CartItem updatedCartItem = cartItemRepository.save(item);
+        cart.getItems().add(updatedCartItem);
 
-        return mapper.convertValue(updatedCart, CartDto.class);
+        return mapper.convertValue(cart, CartDto.class);
     }
 
     private Cart findCartByCustomerId(int token) {

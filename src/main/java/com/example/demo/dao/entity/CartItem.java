@@ -17,13 +17,9 @@ import java.io.Serializable;
 public class CartItem implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
     private Integer id;
 
     @OneToOne
     private Product product;
     private Integer quantity;
-
-    @ManyToOne
-    private Cart cart;
 }

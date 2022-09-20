@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,10 +42,13 @@ public class ExceptionTranslator {
 
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ServiceExceptionResponse handleValidationExceptions(DataIntegrityViolationException ex) {
-        return ServiceExceptionResponse.builder()
+    public PersistentExceptionResponse handleValidationExceptions(DataIntegrityViolationException ex) {
+        List<String> strLst = new ArrayList<>();
+        strLst.add(ex.getMessage());
+        PersistentExceptionResponse error = PersistentExceptionResponse.builder()
                 .timestamp(new Date())
-                .details(ex.getCause().getMessage() + "; bCoz this product is already added into cart; for changing, do update it!")
+                .details(strLst)
                 .build();
+        return error;
     }
 }

@@ -20,7 +20,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public TokenDto registerCustomer(CustomerDto dto) throws TransactionSystemException {
+    public TokenDto registerCustomer(CustomerDto dto) {
         log.debug("registerCustomer ", dto);
         Customer customer = customerRepository.save(Customer.builder()
                 .name(dto.getName())

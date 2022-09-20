@@ -18,10 +18,9 @@ import java.util.Set;
 public class Cart implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
     private Integer id;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cart", cascade = CascadeType.PERSIST)
+    @OneToMany
     private Set<CartItem> items;
     private Integer customerId;
 }

@@ -21,7 +21,6 @@ import java.util.List;
 public class CustomerOrder implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
     private Integer id;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "customerOrder", cascade = CascadeType.PERSIST)

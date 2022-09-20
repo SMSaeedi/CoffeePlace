@@ -32,7 +32,7 @@ public class CartController {
                        @PathVariable int cartItemId,
                        @PathVariable int productId,
                        @PathVariable int quantity) {
-        return cartService.updateCart(token, cartItemId, productId, quantity);
+        return cartService.updateCartItem(token, cartItemId, productId, quantity);
     }
 
     @DeleteMapping("/{cartId}")
