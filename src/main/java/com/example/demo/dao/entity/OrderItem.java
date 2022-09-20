@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
-@Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity(name = "order_item")
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,7 +22,4 @@ public class OrderItem {
     private Product product;
     private Integer quantity;
     private BigDecimal amount;
-
-    @ManyToOne
-    private CustomerOrder customerOrder;
 }

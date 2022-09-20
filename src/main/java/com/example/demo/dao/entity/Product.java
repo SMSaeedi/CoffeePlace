@@ -13,12 +13,12 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "product", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
+@Entity(name = "product")
 public class Product implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

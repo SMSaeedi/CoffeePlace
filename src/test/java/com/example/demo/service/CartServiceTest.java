@@ -7,7 +7,6 @@ import com.example.demo.dao.repository.CartItemRepository;
 import com.example.demo.dao.repository.CartRepository;
 import com.example.demo.dto.CartDto;
 import com.example.demo.enums.ProductType;
-import com.example.demo.service.impl.CartServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -30,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class CartServiceTest {
 
     @Autowired
-    private CartServiceImpl cartService;
+    private CartService cartService;
 
     @MockBean
     private ProductService productService;
@@ -113,7 +112,7 @@ public class CartServiceTest {
         when(cartItemRepository.save(getItems().get(0))).thenReturn(getItems().get(0));
         when(productService.getProductById(getProducts().get(0).getId())).thenReturn(getProducts().get(0));
 
-        CartDto cartDto = cartService.addCart(cartsModel().getCustomerId(), cartsModel().getItems().stream().findFirst().get().getProduct().getId());
+        CartDto cartDto = cartService.addCartAndItem(cartsModel().getCustomerId(), cartsModel().getItems().stream().findFirst().get().getProduct().getId());
 
         assertEquals(cartsModel().getItems().size(), 6);
         assertEquals(cartsModel().getItems().stream().findFirst().get().getProduct().getName(), cartDto.getItems().stream().collect(Collectors.toList()).get(0).getProduct().getName());

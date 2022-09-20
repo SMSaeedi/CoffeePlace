@@ -22,19 +22,25 @@ spring:
         format_sql: true
     defer-datasource-initialization: true
 
-#Service port
+#Server port
 server:
   port: 8085
 
 #Other namings
 service:
   order:
-    impl:
-      descTopping: Congrats! one of your toppings has become a gift
-      descDiscount: Congrats! 25% discount has appended
-      exception:
-        orderNotFound: No such order found!
+    item:
+      orderItemNotFound: No such order item found!
+    descTopping: Congrats! one of your toppings has become a gift
+    descDiscount: Congrats! 25% discount has appended
+    exception:
+      orderNotFound: No such order found!
   cart:
-    impl:
+    exception:
+      cartNotFound: No such cart found!
+  product:
       exception:
-        cartNotFound: No such cart found!
+        productNotFound: No such product found!
+  customer:
+    exception:
+      productNotFound: No such customer found!

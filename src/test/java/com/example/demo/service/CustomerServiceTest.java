@@ -4,7 +4,6 @@ import com.example.demo.dao.entity.Customer;
 import com.example.demo.dao.repository.CustomerRepository;
 import com.example.demo.dto.CustomerDto;
 import com.example.demo.dto.TokenDto;
-import com.example.demo.service.impl.CustomerServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +27,7 @@ import static org.mockito.Mockito.*;
 public class CustomerServiceTest {
 
     @Autowired
-    private CustomerServiceImpl customerService;
+    private CustomerService customerService;
 
     @Autowired
     private ObjectMapper objectMapper;

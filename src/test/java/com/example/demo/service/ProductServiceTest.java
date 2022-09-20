@@ -4,7 +4,6 @@ import com.example.demo.dao.entity.Product;
 import com.example.demo.dao.repository.ProductRepository;
 import com.example.demo.dto.ProductDto;
 import com.example.demo.enums.ProductType;
-import com.example.demo.service.impl.ProductServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +26,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class ProductServiceTest {
     @Autowired
-    private ProductServiceImpl productService;
+    private ProductService productService;
 
     @Autowired
     private ObjectMapper objectMapper;

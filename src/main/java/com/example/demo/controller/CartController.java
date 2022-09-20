@@ -16,28 +16,28 @@ public class CartController {
     }
 
     @GetMapping
-    CartDto getCart(@RequestHeader int token) {
-        return cartService.getCartByToken(token);
+    CartDto getCartByCustomerId(@RequestHeader int customerId) {
+        return cartService.getCartByCustomerId(customerId);
     }
 
     @PostMapping("/{productId}")
     @ResponseStatus(HttpStatus.CREATED)
-    CartDto addCart(@RequestHeader int token,
+    CartDto addCartAndItem(@RequestHeader int customerId,
                     @PathVariable int productId) {
-        return cartService.addCart(token, productId);
+        return cartService.addCartAndItem(customerId, productId);
     }
 
     @PutMapping("/{cartItemId}/{productId}/{quantity}")
-    CartDto updateCart(@RequestHeader int token,
+    CartDto updateCartItem(@RequestHeader int customerId,
                        @PathVariable int cartItemId,
                        @PathVariable int productId,
                        @PathVariable int quantity) {
-        return cartService.updateCartItem(token, cartItemId, productId, quantity);
+        return cartService.updateCartItem(customerId, cartItemId, productId, quantity);
     }
 
     @DeleteMapping("/{cartItemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void removeCart(@PathVariable int cartItemId) {
-        cartService.deleteCart(cartItemId);
+    void removeCartItem(@PathVariable int cartItemId) {
+        cartService.removeCartItem(cartItemId);
     }
 }

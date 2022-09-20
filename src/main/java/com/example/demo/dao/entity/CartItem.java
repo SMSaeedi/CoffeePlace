@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Entity(name = "cart_item")
 public class CartItem implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
