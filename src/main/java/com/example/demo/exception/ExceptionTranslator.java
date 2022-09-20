@@ -2,6 +2,7 @@ package com.example.demo.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,6 +38,15 @@ public class ExceptionTranslator {
         return ServiceExceptionResponse.builder()
                 .timestamp(new Date())
                 .details(ex.getMessage())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ServiceExceptionResponse handleValidationExceptions(MethodArgumentNotValidException ex) {
+        return ServiceExceptionResponse.builder()
+                .timestamp(new Date())
+                .details(ex.getFieldError().getDefaultMessage())
                 .build();
     }
 

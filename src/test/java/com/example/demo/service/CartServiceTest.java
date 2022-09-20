@@ -79,12 +79,12 @@ public class CartServiceTest {
     private List<CartItem> getItems() {
         Set<CartItem> cartItems = new HashSet<>();
 
-        cartItems.add(new CartItem(1, getProducts().get(0), 3, cartsModel()));
-        cartItems.add(new CartItem(2, getProducts().get(1), 1, cartsModel()));
-        cartItems.add(new CartItem(3, getProducts().get(2), 0, cartsModel()));
-        cartItems.add(new CartItem(4, getProducts().get(3), 1, cartsModel()));
-        cartItems.add(new CartItem(5, getProducts().get(4), 2, cartsModel()));
-        cartItems.add(new CartItem(6, getProducts().get(5), 2, cartsModel()));
+        cartItems.add(new CartItem(1, getProducts().get(0), 3));
+        cartItems.add(new CartItem(2, getProducts().get(1), 1));
+        cartItems.add(new CartItem(3, getProducts().get(2), 0));
+        cartItems.add(new CartItem(4, getProducts().get(3), 1));
+        cartItems.add(new CartItem(5, getProducts().get(4), 2));
+        cartItems.add(new CartItem(6, getProducts().get(5), 2));
 
         List<CartItem> items = new ArrayList<>(cartItems);
         return items;
@@ -124,7 +124,7 @@ public class CartServiceTest {
         when(cartRepository.save(Mockito.any(Cart.class))).thenReturn(cartsModel());
         when(cartRepository.findByCustomerId(cartsModel().getCustomerId())).thenReturn(Optional.of(cartsModel()));
 
-        CartDto cartDto = cartService.updateCart(cartsModel().getCustomerId(), cartsModel().getItems().stream().findFirst().get().getId(), cartsModel().getItems().stream().findFirst().get().getProduct().getId(), 5);
+        CartDto cartDto = cartService.updateCartItem(cartsModel().getCustomerId(), cartsModel().getItems().stream().findFirst().get().getId(), cartsModel().getItems().stream().findFirst().get().getProduct().getId(), 5);
 
         assertEquals(cartsModel().getItems().size(), cartDto.getItems().size());
         assertEquals(cartsModel().getItems().stream().findFirst().get().getQuantity(), cartDto.getItems().stream().findFirst().get().getQuantity());
@@ -136,7 +136,7 @@ public class CartServiceTest {
         when(cartRepository.save(Mockito.any(Cart.class))).thenReturn(cartsModel());
         when(cartRepository.findByCustomerId(cartsModel().getCustomerId())).thenReturn(Optional.of(cartsModel()));
 
-        CartDto cartDto = cartService.updateCart(cartsModel().getCustomerId(), cartsModel().getItems().stream().findFirst().get().getId(), cartsModel().getItems().stream().findFirst().get().getProduct().getId(), 0);
+        CartDto cartDto = cartService.updateCartItem(cartsModel().getCustomerId(), cartsModel().getItems().stream().findFirst().get().getId(), cartsModel().getItems().stream().findFirst().get().getProduct().getId(), 0);
 
         assertEquals(cartsModel().getItems().size(), cartDto.getItems().size());
         assertEquals(cartsModel().getItems().stream().findFirst().get().getQuantity(), cartDto.getItems().stream().findFirst().get().getQuantity());

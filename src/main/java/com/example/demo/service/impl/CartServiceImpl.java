@@ -93,12 +93,12 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void deleteCart(int token, int cartId) {
-        log.debug("deleteCart ", cartId);
-        Optional<Cart> cartByCustomerId = cartRepository.findByCustomerId(token);
+    public void deleteCart(int cartItemId) {
+        log.debug("deleteCart ", cartItemId);
+        Optional<CartItem> cartByCustomerId = cartItemRepository.findById(cartItemId);
 
         if (cartByCustomerId.isPresent())
-            cartRepository.deleteById(cartId);
+            cartItemRepository.deleteById(cartItemId);
         cartByCustomerId.orElseThrow(() -> new NotFoundException(cartNotFound));
     }
 }

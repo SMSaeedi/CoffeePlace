@@ -23,15 +23,7 @@ public class Product implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-
-    @NotNull(message = "name is mandatory")
-    @Length(min = 3, max = 15, message = "name length should be between 3 to 15")
     private String name;
-
-    @NotNull(message = "type is mandatory")
-    @Size(min = 1, max = 1, message = "type can be either 0, 1 or 2")
     private ProductType type;
-
-    @NotNull(message = "price is mandatory")
     private BigDecimal price;
 }

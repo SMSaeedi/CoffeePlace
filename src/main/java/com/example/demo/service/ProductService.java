@@ -14,8 +14,4 @@ public interface ProductService {
     ProductDto newProduct(ProductDto productDto);
     ProductDto updateProduct(int productId, ProductDto productDto);
     void removeProduct(int productId);
-
-    BigDecimal getTotalAmountPerCustomer(int token);
-
-    List<ProductType> mostUsedToppings();
 }

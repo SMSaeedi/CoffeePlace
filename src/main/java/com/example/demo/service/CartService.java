@@ -8,5 +8,5 @@ public interface CartService {
 
     CartDto updateCartItem(int token,int cartItemId, int productId, int quantity);
 
-    void deleteCart(int token, int cartId);
+    void deleteCart(int cartItemId);
 }

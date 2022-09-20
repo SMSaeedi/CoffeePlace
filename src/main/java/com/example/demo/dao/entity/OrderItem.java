@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "orderItem")
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

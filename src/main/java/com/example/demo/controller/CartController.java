@@ -35,10 +35,9 @@ public class CartController {
         return cartService.updateCartItem(token, cartItemId, productId, quantity);
     }
 
-    @DeleteMapping("/{cartId}")
+    @DeleteMapping("/{cartItemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void removeCart(@RequestHeader int token,
-                    @PathVariable Integer cartId) {
-        cartService.deleteCart(token,cartId);
+    void removeCart(@PathVariable int cartItemId) {
+        cartService.deleteCart(cartItemId);
     }
 }

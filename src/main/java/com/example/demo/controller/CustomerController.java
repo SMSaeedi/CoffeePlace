@@ -11,7 +11,6 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/customers")
-@Validated
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -22,7 +21,7 @@ public class CustomerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    TokenDto registerCustomer(@Valid @RequestBody CustomerDto request) {
+    TokenDto registerCustomer(@Validated @RequestBody CustomerDto request) {
         return customerService.registerCustomer(request);
     }
 }
