@@ -1,9 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.MostUsedProduct;
 import com.example.demo.enums.ProductType;
 import com.example.demo.service.ReportService;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,7 +22,7 @@ public class ReportController {
     }
 
     @GetMapping("/topToppings")
-    List<MostUsedProduct> mostUsedToppings() {
-        return reportService.mostUsedToppings(ProductType.TOPPINGS);
+    List<ProductType> mostUsedToppings() {
+        return reportService.mostUsedToppings();
     }
 }

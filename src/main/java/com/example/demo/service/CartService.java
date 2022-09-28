@@ -61,7 +61,6 @@ public class CartService {
         LogInfo.logger.info("updateCart ", productId);
         Cart cart = findCartByCustomerId(customerId);
 
-
         CartItem item = cart.getItems().stream().filter(cartItem -> cartItem.getId().equals(cartItemId)
                         && cartItem.getProduct().getId().equals(productId)).findFirst()
                 .orElseGet(() -> cartItemRepository.save(CartItem.builder()
@@ -92,6 +91,6 @@ public class CartService {
 
         if (cartItemById.isPresent())
             cartItemRepository.deleteById(cartItemId);
-        cartItemById.orElseThrow(() -> new NotFoundException(cartNotFound));
+        throw new NotFoundException(cartNotFound);
     }
 }

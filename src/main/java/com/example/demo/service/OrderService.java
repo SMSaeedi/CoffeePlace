@@ -94,7 +94,7 @@ public class OrderService {
 
         if (orderItemById.isPresent())
             orderItemRepository.deleteById(orderItemId);
-        orderItemById.orElseThrow(() -> new NotFoundException(orderItemNotFound));
+        throw new NotFoundException(orderItemNotFound);
     }
 
 

@@ -6,7 +6,6 @@ import com.example.demo.dto.ProductDto;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.log.LogInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +64,6 @@ public class ProductService {
 
         if (productById.isPresent())
             productRepository.deleteById(productId);
-        productById.orElseThrow(() -> new NotFoundException(productNotFound));
+        throw new NotFoundException(productNotFound);
     }
 }

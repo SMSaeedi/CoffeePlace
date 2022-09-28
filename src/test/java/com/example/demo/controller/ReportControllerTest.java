@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.MostUsedProduct;
 import com.example.demo.dto.ProductDto;
 import com.example.demo.enums.ProductType;
 import com.example.demo.exception.ExceptionTranslator;
@@ -41,7 +40,7 @@ public class ReportControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private List<MostUsedProduct> getMostUsedToppings() {
+/*    private List<ProductType> getMostUsedToppings() {
         ProductDto topping1 = new ProductDto(3, "Milk", ProductType.TOPPINGS, BigDecimal.valueOf(2));
         MostUsedProduct mostUsedProduct1 = MostUsedProduct.builder().product(topping1).count(5L).build();
         ProductDto topping2 = new ProductDto(4, "Hazelnut syrup", ProductType.TOPPINGS, BigDecimal.valueOf(3));
@@ -49,7 +48,7 @@ public class ReportControllerTest {
         ProductDto topping3 = new ProductDto(5, "Chocolate sauce", ProductType.TOPPINGS, BigDecimal.valueOf(5));
         MostUsedProduct mostUsedProduct3 = MostUsedProduct.builder().product(topping3).count(2L).build();
         return List.of(mostUsedProduct1, mostUsedProduct2, mostUsedProduct3);
-    }
+    }*/
 
     @BeforeEach
     public void setup() {
@@ -69,7 +68,7 @@ public class ReportControllerTest {
 
     @Test
     public void findMostUsedToppingsForDrinks_customerId_OrderReportDto() throws Exception {
-        when(reportService.mostUsedToppings(ProductType.TOPPINGS)).thenReturn(getMostUsedToppings());
+//        when(reportService.mostUsedToppings()).thenReturn(getMostUsedToppings());
         mockMvc.perform(get("/admin/reports/toppings").header("customerId", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

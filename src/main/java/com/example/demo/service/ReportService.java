@@ -3,7 +3,6 @@ package com.example.demo.service;
 import com.example.demo.dao.entity.Order;
 import com.example.demo.dao.repository.OrderItemRepository;
 import com.example.demo.dao.repository.OrderRepository;
-import com.example.demo.dto.MostUsedProduct;
 import com.example.demo.dto.OrderDto;
 import com.example.demo.enums.ProductType;
 import com.example.demo.exception.NotFoundException;
@@ -37,9 +36,9 @@ public class ReportService {
         return orderDto.getTotalAmount();
     }
 
-    public List<MostUsedProduct> mostUsedToppings(ProductType productType) {
+    public List<ProductType> mostUsedToppings() {
         LogInfo.logger.info("mostUsedToppings ");
-//        return orderItemRepository.mostUsedProducts(productType);
+        orderItemRepository.findAllByProduct();
         return null;
     }
 }
