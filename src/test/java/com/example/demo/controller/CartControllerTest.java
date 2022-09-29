@@ -82,13 +82,13 @@ public class CartControllerTest {
 	}
 
 	public List<CartItemDto> getCartItemList() {
-		ProductDto drink1 = new ProductDto(1, "Black Coffee", ProductType.COFFEE, BigDecimal.valueOf(4));
+		ProductDto drink1 = new ProductDto("Black Coffee", ProductType.COFFEE, BigDecimal.valueOf(4));
 		CartItemDto item1 = CartItemDto.builder().product(drink1).quantity(1).build();
-		ProductDto drink2 = new ProductDto(2, "Latte", ProductType.COFFEE, BigDecimal.valueOf(5));
+		ProductDto drink2 = new ProductDto("Latte", ProductType.COFFEE, BigDecimal.valueOf(5));
 		CartItemDto item2 = CartItemDto.builder().product(drink2).quantity(1).build();
-		ProductDto drink3 = new ProductDto(3, "Mocha", ProductType.COFFEE, BigDecimal.valueOf(6));
+		ProductDto drink3 = new ProductDto("Mocha", ProductType.COFFEE, BigDecimal.valueOf(6));
 		CartItemDto item3 = CartItemDto.builder().product(drink3).quantity(1).build();
-		ProductDto topping1 = new ProductDto(4, "Milk", ProductType.TOPPINGS, BigDecimal.valueOf(2));
+		ProductDto topping1 = new ProductDto("Milk", ProductType.TOPPINGS, BigDecimal.valueOf(2));
 		CartItemDto item4 = CartItemDto.builder().product(topping1).quantity(1).build();
 
 		return List.of(item1, item2, item3, item4);

@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dao.entity.Order;
+import com.example.demo.dao.entity.OrderItem;
 import com.example.demo.dao.repository.OrderItemRepository;
 import com.example.demo.dao.repository.OrderRepository;
 import com.example.demo.dto.OrderDto;
@@ -12,7 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ReportService {
@@ -36,9 +38,18 @@ public class ReportService {
         return orderDto.getTotalAmount();
     }
 
-    public List<ProductType> mostUsedToppings() {
+    public List<String> mostUsedToppings() {
         LogInfo.logger.info("mostUsedToppings ");
-        orderItemRepository.findAllByProduct();
-        return null;
+        List<OrderItem> toppings = orderItemRepository.findAllByProduct_Type(ProductType.TOPPINGS);
+        Set<OrderItem> duplicateToppings = new HashSet<>();
+        Map<String, Integer> mostUsedToppingsMap = new HashMap<>();
+        for (OrderItem o : toppings) {
+            Set<OrderItem> duplicateToppingsSet = toppings.stream()
+                    .filter(orderItem -> !duplicateToppings.add(o)).collect(Collectors.toSet());
+            int sum = duplicateToppingsSet.stream().mapToInt(value -> value.getQuantity()).sum();
+            mostUsedToppingsMap.put(o.getProduct().getType().name(), sum);
+        }
+        List<String> value = new ArrayList<>(mostUsedToppingsMap.keySet());
+        return value;
     }
 }

@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.enums.ProductType;
 import com.example.demo.service.ReportService;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
@@ -22,7 +21,7 @@ public class ReportController {
     }
 
     @GetMapping("/topToppings")
-    List<ProductType> mostUsedToppings() {
+    List<String> mostUsedToppings() {
         return reportService.mostUsedToppings();
     }
 }

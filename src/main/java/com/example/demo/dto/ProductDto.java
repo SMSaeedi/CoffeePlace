@@ -16,8 +16,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class ProductDto {
-    private int id;
-
     @NotNull(message = "name is mandatory")
     @Length(min = 3, max = 15, message = "name length should be between 3 to 15")
     private String name;

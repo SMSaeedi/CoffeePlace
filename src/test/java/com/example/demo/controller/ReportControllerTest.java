@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.OrderDto;
+import com.example.demo.dto.OrderItemDto;
 import com.example.demo.dto.ProductDto;
 import com.example.demo.enums.ProductType;
 import com.example.demo.exception.ExceptionTranslator;
+import com.example.demo.service.OrderService;
 import com.example.demo.service.ProductService;
 import com.example.demo.service.ReportService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -37,18 +42,32 @@ public class ReportControllerTest {
     @MockBean
     ReportService reportService;
 
+    @MockBean
+    OrderService orderService;
+
     @Autowired
     private MockMvc mockMvc;
 
-/*    private List<ProductType> getMostUsedToppings() {
-        ProductDto topping1 = new ProductDto(3, "Milk", ProductType.TOPPINGS, BigDecimal.valueOf(2));
-        MostUsedProduct mostUsedProduct1 = MostUsedProduct.builder().product(topping1).count(5L).build();
-        ProductDto topping2 = new ProductDto(4, "Hazelnut syrup", ProductType.TOPPINGS, BigDecimal.valueOf(3));
-        MostUsedProduct mostUsedProduct2 = MostUsedProduct.builder().product(topping2).count(3L).build();
-        ProductDto topping3 = new ProductDto(5, "Chocolate sauce", ProductType.TOPPINGS, BigDecimal.valueOf(5));
-        MostUsedProduct mostUsedProduct3 = MostUsedProduct.builder().product(topping3).count(2L).build();
-        return List.of(mostUsedProduct1, mostUsedProduct2, mostUsedProduct3);
-    }*/
+    private List<ProductDto> getProducts() {
+        ProductDto product1 = new ProductDto("Milk", ProductType.TOPPINGS, BigDecimal.valueOf(2));
+        ProductDto product2 = new ProductDto("Hazelnut syrup", ProductType.TOPPINGS, BigDecimal.valueOf(3));
+        ProductDto product3 = new ProductDto("Chocolate sauce", ProductType.TOPPINGS, BigDecimal.valueOf(5));
+        return List.of(product1, product2, product3);
+    }
+
+    private List<OrderItemDto> orderItems() {
+        OrderItemDto item1 = new OrderItemDto(getProducts().get(0), 2, getProducts().get(0).getPrice());
+        OrderItemDto item2 = new OrderItemDto(getProducts().get(1), 1, getProducts().get(1).getPrice());
+        OrderItemDto item3 = new OrderItemDto(getProducts().get(0), 3, getProducts().get(0).getPrice());
+        OrderItemDto item4 = new OrderItemDto(getProducts().get(1), 2, getProducts().get(1).getPrice());
+        OrderItemDto item5 = new OrderItemDto(getProducts().get(2), 1, getProducts().get(2).getPrice());
+        OrderItemDto item6 = new OrderItemDto(getProducts().get(1), 3, getProducts().get(1).getPrice());
+        return List.of(item1, item2, item3, item4, item5, item6);
+    }
+
+    private OrderDto getOrder() {
+        return new OrderDto(orderItems(), BigDecimal.valueOf(25), "hot and decaf please");
+    }
 
     @BeforeEach
     public void setup() {
@@ -67,13 +86,12 @@ public class ReportControllerTest {
     }
 
     @Test
-    public void findMostUsedToppingsForDrinks_customerId_OrderReportDto() throws Exception {
-//        when(reportService.mostUsedToppings()).thenReturn(getMostUsedToppings());
-        mockMvc.perform(get("/admin/reports/toppings").header("customerId", 1))
+    public void findMostUsedToppings() throws Exception {
+        when(orderService.createOrder(1, getOrder())).thenReturn(getOrder());
+        when(reportService.mostUsedToppings()).thenReturn(new ArrayList<>());
+        mockMvc.perform(get("/api/reports/topToppings"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()").value(3))
-                .andExpect(jsonPath("$.[0].count").value(5))
-                .andExpect(jsonPath("$.[0].product.name").value("Milk"));
+                .andExpect(jsonPath("$.length()").value(0));
     }
 }
