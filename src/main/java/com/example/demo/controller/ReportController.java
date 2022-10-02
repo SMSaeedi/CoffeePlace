@@ -16,8 +16,8 @@ public class ReportController {
     }
 
     @GetMapping("/totalAmount")
-    BigDecimal getTotalAmountPerCustomer(@RequestHeader int token) {
-        return reportService.getTotalAmountPerCustomer(token);
+    BigDecimal getTotalAmountPerCustomer(@RequestHeader int customerId) {
+        return reportService.getTotalAmountPerCustomer(customerId);
     }
 
     @GetMapping("/topToppings")

@@ -21,4 +21,5 @@ public class CartItem implements Serializable {
     @OneToOne
     private Product product;
     private Integer quantity;
+    private Integer cartId;
 }

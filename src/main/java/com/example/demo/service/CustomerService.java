@@ -42,6 +42,10 @@ public class CustomerService {
                 .email(dto.getEmail())
                 .postalAddress(dto.getPostalAddress())
                 .build());
+        return toCustomerDto(customer);
+    }
+
+    private CustomerDto toCustomerDto(Customer customer) {
         return mapper.convertValue(customer, CustomerDto.class);
     }
 }

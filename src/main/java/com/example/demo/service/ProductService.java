@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -28,7 +29,7 @@ public class ProductService {
 
     public List<ProductDto> getProduct() {
         LogInfo.logger.info("getProduct ");
-        return mapper.convertValue(productRepository.findAll(), List.class);
+        return productRepository.findAll().stream().map(this::toProductDto).collect(Collectors.toList());
     }
 
 
@@ -44,7 +45,7 @@ public class ProductService {
                 .type(productDto.getType())
                 .price(productDto.getPrice())
                 .build();
-        return mapper.convertValue(productRepository.save(newProduct), ProductDto.class);
+        return toProductDto(productRepository.save(newProduct));
     }
 
     public ProductDto updateProduct(int productId, ProductDto productDto) {
@@ -55,7 +56,7 @@ public class ProductService {
                 .type(productDto.getType())
                 .price(productDto.getPrice())
                 .build();
-        return mapper.convertValue(productRepository.save(newProduct), ProductDto.class);
+        return toProductDto(productRepository.save(newProduct));
     }
 
     public void removeProduct(int productId) {
@@ -65,5 +66,9 @@ public class ProductService {
         if (productById.isPresent())
             productRepository.deleteById(productId);
         throw new NotFoundException(productNotFound);
+    }
+
+    private ProductDto toProductDto(Product cart) {
+        return mapper.convertValue(cart, ProductDto.class);
     }
 }

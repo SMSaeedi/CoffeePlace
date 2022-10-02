@@ -34,18 +34,19 @@ public class CartService {
 
     public CartDto getCartByCustomerId(int customerId) {
         LogInfo.logger.info("getCartByToken ");
-        return mapper.convertValue(findCartByCustomerId(customerId), CartDto.class);
+        return toCartDto(findCartByCustomerId(customerId));
     }
 
-    public CartDto addCartAndItem(int token, int productId) {
+    public CartDto addCartAndItem(int customerId, int productId) {
         LogInfo.logger.info("addCart ", productId);
-        Cart cart = cartRepository.findByCustomerId(token)
+        Cart cart = cartRepository.findByCustomerId(customerId)
                 .orElseGet(() -> cartRepository.save(Cart.builder()
-                        .customerId(token)
+                        .customerId(customerId)
                         .items(new HashSet<>())
                         .build()));
 
         CartItem newItem = cartItemRepository.save(CartItem.builder()
+                .cartId(cart.getId())
                 .product(productService.getProductById(productId))
                 .quantity(1)
                 .build());
@@ -54,17 +55,18 @@ public class CartService {
 
         Cart addNewItem = cartRepository.save(cart);
 
-        return mapper.convertValue(addNewItem, CartDto.class);
+        return toCartDto(addNewItem);
     }
 
     public CartDto updateCartItem(int customerId, int cartItemId, int productId, int quantity) {
-        LogInfo.logger.info("updateCart ", productId);
+        LogInfo.logger.info("updateCart ", cartItemId);
         Cart cart = findCartByCustomerId(customerId);
 
         CartItem item = cart.getItems().stream().filter(cartItem -> cartItem.getId().equals(cartItemId)
                         && cartItem.getProduct().getId().equals(productId)).findFirst()
                 .orElseGet(() -> cartItemRepository.save(CartItem.builder()
                         .id(cartItemId)
+                        .cartId(cart.getId())
                         .product(productService.getProductById(productId))
                         .quantity(quantity)
                         .build()));
@@ -77,7 +79,7 @@ public class CartService {
         CartItem updatedCartItem = cartItemRepository.save(item);
         cart.getItems().add(updatedCartItem);
 
-        return mapper.convertValue(cart, CartDto.class);
+        return toCartDto(cart);
     }
 
     private Cart findCartByCustomerId(int customerId) {
@@ -92,5 +94,9 @@ public class CartService {
         if (cartItemById.isPresent())
             cartItemRepository.deleteById(cartItemId);
         throw new NotFoundException(cartNotFound);
+    }
+
+    private CartDto toCartDto(Cart cart) {
+        return mapper.convertValue(cart, CartDto.class);
     }
 }

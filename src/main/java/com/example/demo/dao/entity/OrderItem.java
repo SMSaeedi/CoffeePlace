@@ -22,4 +22,6 @@ public class OrderItem {
     private Product product;
     private Integer quantity;
     private BigDecimal amount;
+    private Integer cartItemId;
+
 }

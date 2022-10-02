@@ -17,9 +17,8 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    OrderDto createOrder(@RequestHeader int customerId,
-                         @RequestBody OrderDto newOrder) {
-        return orderService.createOrder(customerId, newOrder);
+    OrderDto createOrder(@RequestHeader int customerId) {
+        return orderService.createOrder(customerId);
     }
 
     @GetMapping
@@ -27,9 +26,9 @@ public class OrderController {
         return orderService.getOrderByCustomerId(customerId);
     }
 
-    @GetMapping("/{orderItemId}")
+    @GetMapping("/{orderId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void cancelOrderItem(@PathVariable int orderItemId) {
-        orderService.cancelOrderItem(orderItemId);
+    void cancelOrder(@PathVariable int orderId) {
+        orderService.cancelOrder(orderId);
     }
 }

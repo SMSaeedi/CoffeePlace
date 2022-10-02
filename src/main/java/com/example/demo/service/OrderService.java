@@ -4,6 +4,7 @@ import com.example.demo.dao.entity.Cart;
 import com.example.demo.dao.entity.CartItem;
 import com.example.demo.dao.entity.Order;
 import com.example.demo.dao.entity.OrderItem;
+import com.example.demo.dao.repository.CartItemRepository;
 import com.example.demo.dao.repository.CartRepository;
 import com.example.demo.dao.repository.OrderItemRepository;
 import com.example.demo.dao.repository.OrderRepository;
@@ -32,6 +33,9 @@ public class OrderService {
     @Value("${service.order.descDiscount}")
     private String descDiscount;
 
+    @Value("${service.order.none}")
+    private String noBones;
+
     @Value("${service.order.exception.orderNotFound}")
     private String orderNotFound;
 
@@ -44,34 +48,38 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
     private final ObjectMapper mapper;
 
-    public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, CartRepository cartRepository, ObjectMapper mapper) {
+    public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, CartRepository cartRepository, CartItemRepository cartItemRepository, ObjectMapper mapper) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.cartRepository = cartRepository;
+        this.cartItemRepository = cartItemRepository;
         this.mapper = mapper;
     }
 
-    public OrderDto createOrder(int token, OrderDto request) {
-        LogInfo.logger.info("createOrder ", request);
-        Cart cart = cartRepository.findByCustomerId(token).orElseThrow(() -> new NotFoundException(cartNotFound));
+    public OrderDto createOrder(int customerId) {
+        LogInfo.logger.info("createOrder ");
+        Cart cart = cartRepository.findByCustomerId(customerId).orElseThrow(() -> new NotFoundException(cartNotFound));
+        List<CartItem> cartItems = cartItemRepository.findAllByCartId(cart.getId());
 
-        List<OrderItem> orderItems = cart.getItems().stream().map(this::cartItemToOrderItem).collect(Collectors.toList());
-        OrderDto orderDto = calculateBones(request);
-        Order newOrder = orderRepository.save(Order.builder()
+        List<OrderItem> orderItems = cartItems.stream().map(this::cartItemToOrderItem).collect(Collectors.toList());
+        Order newOrder = Order.builder()
                 .orderItems(orderItems)
-                .customerId(token)
+                .customerId(customerId)
                 .orderDate(new Date())
-                .totalAmount(orderDto.getTotalAmount())
                 .orderStatus(OrderStatus.REGISTERED)
-                .build());
+                .build();
+        OrderDto newOrderDto = toOrderDto(newOrder);
+        newOrder.setTotalAmount(calculateBones(newOrderDto).getTotalAmount());
 
-        return mapper.convertValue(newOrder, OrderDto.class);
+        return toOrderDto(orderRepository.save(newOrder));
     }
 
     private OrderItem cartItemToOrderItem(CartItem cartItem) {
         return orderItemRepository.save(OrderItem.builder()
+                .cartItemId(cartItem.getId())
                 .product(cartItem.getProduct())
                 .quantity(cartItem.getQuantity())
                 .amount(cartItem.getProduct().getPrice())
@@ -80,7 +88,7 @@ public class OrderService {
 
     public OrderDto getOrderByCustomerId(int customerId) {
         LogInfo.logger.info("getOrderByCustomerId ");
-        return mapper.convertValue(findOrderByCustomerId(customerId), OrderDto.class);
+        return toOrderDto(findOrderByCustomerId(customerId));
     }
 
     private Order findOrderByCustomerId(int customerId) {
@@ -88,15 +96,19 @@ public class OrderService {
         return orderRepository.findByCustomerId(customerId).orElseThrow(() -> new NotFoundException(orderNotFound));
     }
 
-    public void cancelOrderItem(int orderItemId) {
+    public void cancelOrder(int orderId) {
         LogInfo.logger.info("cancelOrderItem ");
-        Optional<OrderItem> orderItemById = orderItemRepository.findById(orderItemId);
+        Optional<Order> orderItemById = orderRepository.findById(orderId);
 
-        if (orderItemById.isPresent())
-            orderItemRepository.deleteById(orderItemId);
+        if (orderItemById.isPresent()) {
+            Order canceledOrder = Order.builder()
+                    .id(orderId)
+                    .orderStatus(OrderStatus.CANCELED)
+                    .build();
+            orderRepository.save(canceledOrder);
+        }
         throw new NotFoundException(orderItemNotFound);
     }
-
 
     private OrderDto calculateBones(OrderDto orderDto) {
         boolean freeTopping = false;
@@ -104,32 +116,35 @@ public class OrderService {
         boolean discount = false;
         BigDecimal discountAmount = BigDecimal.ZERO;
 
-        List<OrderItemDto> toppingsList = orderDto.getOrderDetails().stream().filter(orderDetails -> orderDetails.getProduct().getType().equals(ProductType.TOPPINGS)).collect(Collectors.toList());
+        List<OrderItemDto> toppingsList = orderDto.getOrderItems().stream().filter(orderDetails -> orderDetails.getProduct().getType().equals(ProductType.TOPPINGS)).collect(Collectors.toList());
         Optional<OrderItemDto> minPriceToppingItem = toppingsList.stream().min(Comparator.comparing(cartItemDto -> cartItemDto.getProduct().getPrice()));
 
-        boolean drinksItems = orderDto.getOrderDetails().stream().filter(cartItemDto -> cartItemDto.getProduct().getType().equals(ProductType.COFFEE)).collect(Collectors.toList()).size() >= 3;
+        boolean drinksItems = orderDto.getOrderItems().stream().filter(cartItemDto -> cartItemDto.getProduct().getType().equals(ProductType.COFFEE)).collect(Collectors.toList()).size() >= 3;
         if (drinksItems) {
             freeTopping = true;
-            orderDto.setTotalAmount(orderDto.getTotalAmount().subtract(minPriceToppingItem.get().getProduct().getPrice()));
-            toppingFreeAmount = orderDto.getTotalAmount();
+            toppingFreeAmount = orderDto.getTotalAmount().subtract(minPriceToppingItem.get().getProduct().getPrice());
         }
 
-        if (orderDto.getTotalAmount().compareTo(BigDecimal.valueOf(12)) >= 1) {
+        if (orderDto.getTotalAmount().compareTo(BigDecimal.valueOf(12)) >= 0) {
             discount = true;
-            orderDto.getTotalAmount().subtract(orderDto.getTotalAmount().multiply(BigDecimal.valueOf(25)).divide(BigDecimal.valueOf(100)));
-            discountAmount = orderDto.getTotalAmount();
+            discountAmount = orderDto.getTotalAmount().subtract(orderDto.getTotalAmount().multiply(BigDecimal.valueOf(25)).divide(BigDecimal.valueOf(100)));
         }
 
         if (freeTopping && discount)
-            if (discountAmount.compareTo(toppingFreeAmount) >= 1) {
+            if (discountAmount.compareTo(toppingFreeAmount) >= 0) {
                 orderDto.setTotalAmount(toppingFreeAmount);
                 orderDto.setDescription(descTopping);
                 return orderDto;
-            } else {
+            } else if (toppingFreeAmount.compareTo(discountAmount) >= 0) {
                 orderDto.setTotalAmount(discountAmount);
                 orderDto.setDescription(descDiscount);
                 return orderDto;
-            }
+            } else
+                orderDto.setDescription(noBones);
         return orderDto;
+    }
+
+    private OrderDto toOrderDto(Order order) {
+        return mapper.convertValue(order, OrderDto.class);
     }
 }

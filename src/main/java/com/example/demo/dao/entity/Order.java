@@ -29,4 +29,5 @@ public class Order implements Serializable {
     private Date orderDate;
     private BigDecimal totalAmount;
     private OrderStatus orderStatus;
+    private String description;
 }

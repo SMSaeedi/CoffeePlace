@@ -33,6 +33,7 @@ service:
       orderItemNotFound: No such order item found!
     descTopping: Congrats! one of your toppings has become a gift
     descDiscount: Congrats! 25% discount has appended
+    none: No bones appended!
     exception:
       orderNotFound: No such order found!
   cart:

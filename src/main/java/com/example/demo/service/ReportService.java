@@ -34,8 +34,7 @@ public class ReportService {
     public BigDecimal getTotalAmountPerCustomer(int customerId) {
         LogInfo.logger.info("getTotalAmountPerCustomer ");
         Order order = orderRepository.findByCustomerId(customerId).orElseThrow(() -> new NotFoundException(orderNotFound));
-        OrderDto orderDto = mapper.convertValue(order, OrderDto.class);
-        return orderDto.getTotalAmount();
+        return toOrderDto(order).getTotalAmount();
     }
 
     public List<String> mostUsedToppings() {
@@ -51,5 +50,9 @@ public class ReportService {
         }
         List<String> value = new ArrayList<>(mostUsedToppingsMap.keySet());
         return value;
+    }
+
+    private OrderDto toOrderDto(Order order) {
+        return mapper.convertValue(order, OrderDto.class);
     }
 }

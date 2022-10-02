@@ -13,12 +13,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderDto {
-    private List<OrderItemDto> orderDetails;
+    private List<OrderItemDto> orderItems;
     private BigDecimal totalAmount;
     private String description;
 
     public BigDecimal getTotalAmount() {
-        return orderDetails.stream().map(orderItemDto -> (orderItemDto.getProduct().getPrice().multiply(BigDecimal.valueOf(orderItemDto.getQuantity()))))
+        return orderItems.stream().map(orderItemDto -> (orderItemDto.getProduct().getPrice().multiply(BigDecimal.valueOf(orderItemDto.getQuantity()))))
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 }
