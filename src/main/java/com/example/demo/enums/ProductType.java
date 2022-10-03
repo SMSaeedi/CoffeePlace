@@ -1,9 +1,10 @@
 package com.example.demo.enums;
 
+import lombok.Data;
+
 public enum ProductType {
     COFFEE(0, "COFFEE"),
-    TOPPINGS(1, "TOPPINGS"),
-    TEA(2, "TEA");
+    TOPPINGS(1, "TOPPINGS");
 
     private final int code;
     private final String name;

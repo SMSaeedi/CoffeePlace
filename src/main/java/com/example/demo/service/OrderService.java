@@ -30,6 +30,9 @@ public class OrderService {
     @Value("${service.order.descTopping}")
     private String descTopping;
 
+    @Value("${service.order.orderDesc}")
+    private String desc;
+
     @Value("${service.order.descDiscount}")
     private String descDiscount;
 
@@ -65,14 +68,12 @@ public class OrderService {
         List<CartItem> cartItems = cartItemRepository.findAllByCartId(cart.getId());
 
         List<OrderItem> orderItems = cartItems.stream().map(this::cartItemToOrderItem).collect(Collectors.toList());
-        Order newOrder = Order.builder()
+        Order newOrder = calculateBones(toOrderDto(Order.builder()
                 .orderItems(orderItems)
-                .customerId(customerId)
-                .orderDate(new Date())
-                .orderStatus(OrderStatus.REGISTERED)
-                .build();
-        OrderDto newOrderDto = toOrderDto(newOrder);
-        newOrder.setTotalAmount(calculateBones(newOrderDto).getTotalAmount());
+                .build()));
+        newOrder.setOrderDate(new Date());
+        newOrder.setCustomerId(customerId);
+        newOrder.setOrderStatus(OrderStatus.REGISTERED);
 
         return toOrderDto(orderRepository.save(newOrder));
     }
@@ -104,17 +105,19 @@ public class OrderService {
             Order canceledOrder = Order.builder()
                     .id(orderId)
                     .orderStatus(OrderStatus.CANCELED)
+                    .orderDate(new Date())
+                    .description(desc)
                     .build();
             orderRepository.save(canceledOrder);
         }
         throw new NotFoundException(orderItemNotFound);
     }
 
-    private OrderDto calculateBones(OrderDto orderDto) {
+    private Order calculateBones(OrderDto orderDto) {
         boolean freeTopping = false;
-        BigDecimal toppingFreeAmount = BigDecimal.ZERO;
+        BigDecimal oneFreeTopping = BigDecimal.ZERO;
         boolean discount = false;
-        BigDecimal discountAmount = BigDecimal.ZERO;
+        BigDecimal discount_25Percent = BigDecimal.ZERO;
 
         List<OrderItemDto> toppingsList = orderDto.getOrderItems().stream().filter(orderDetails -> orderDetails.getProduct().getType().equals(ProductType.TOPPINGS)).collect(Collectors.toList());
         Optional<OrderItemDto> minPriceToppingItem = toppingsList.stream().min(Comparator.comparing(cartItemDto -> cartItemDto.getProduct().getPrice()));
@@ -122,29 +125,32 @@ public class OrderService {
         boolean drinksItems = orderDto.getOrderItems().stream().filter(cartItemDto -> cartItemDto.getProduct().getType().equals(ProductType.COFFEE)).collect(Collectors.toList()).size() >= 3;
         if (drinksItems) {
             freeTopping = true;
-            toppingFreeAmount = orderDto.getTotalAmount().subtract(minPriceToppingItem.get().getProduct().getPrice());
+            oneFreeTopping = orderDto.getTotalAmount().subtract(minPriceToppingItem.get().getProduct().getPrice());
         }
 
         if (orderDto.getTotalAmount().compareTo(BigDecimal.valueOf(12)) >= 0) {
             discount = true;
-            discountAmount = orderDto.getTotalAmount().subtract(orderDto.getTotalAmount().multiply(BigDecimal.valueOf(25)).divide(BigDecimal.valueOf(100)));
+            discount_25Percent = orderDto.getTotalAmount().subtract(orderDto.getTotalAmount().multiply(BigDecimal.valueOf(25)).divide(BigDecimal.valueOf(100)));
         }
 
         if (freeTopping && discount)
-            if (discountAmount.compareTo(toppingFreeAmount) >= 0) {
-                orderDto.setTotalAmount(toppingFreeAmount);
+            if (discount_25Percent.compareTo(oneFreeTopping) >= 0) {
+                orderDto.setTotalAmount(oneFreeTopping);
                 orderDto.setDescription(descTopping);
-                return orderDto;
-            } else if (toppingFreeAmount.compareTo(discountAmount) >= 0) {
-                orderDto.setTotalAmount(discountAmount);
+            } else if (oneFreeTopping.compareTo(discount_25Percent) >= 0) {
+                orderDto.setTotalAmount(discount_25Percent);
                 orderDto.setDescription(descDiscount);
-                return orderDto;
             } else
                 orderDto.setDescription(noBones);
-        return orderDto;
+
+        return toOrderEntity(orderDto);
     }
 
     private OrderDto toOrderDto(Order order) {
         return mapper.convertValue(order, OrderDto.class);
+    }
+
+    private Order toOrderEntity(OrderDto orderDto) {
+        return mapper.convertValue(orderDto, Order.class);
     }
 }

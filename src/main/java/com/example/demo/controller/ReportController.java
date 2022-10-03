@@ -1,9 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.service.ReportService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reports")
@@ -21,7 +25,7 @@ public class ReportController {
     }
 
     @GetMapping("/topToppings")
-    List<String> mostUsedToppings() {
+    Map<String, Integer> mostUsedToppings() {
         return reportService.mostUsedToppings();
     }
 }

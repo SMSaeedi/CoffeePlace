@@ -88,7 +88,7 @@ public class ReportControllerTest {
     @Test
     public void findMostUsedToppings() throws Exception {
 //        when(orderService.createOrder(1, getOrder())).thenReturn(getOrder());
-        when(reportService.mostUsedToppings()).thenReturn(new ArrayList<>());
+//        when(reportService.mostUsedToppings()).thenReturn(new ArrayList<>());
         mockMvc.perform(get("/api/reports/topToppings"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
