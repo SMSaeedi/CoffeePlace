@@ -78,12 +78,12 @@ public class CartServiceTest {
     private List<CartItem> getItems() {
         Set<CartItem> cartItems = new HashSet<>();
 
-        cartItems.add(new CartItem(1, getProducts().get(0), 3));
-        cartItems.add(new CartItem(2, getProducts().get(1), 1));
-        cartItems.add(new CartItem(3, getProducts().get(2), 0));
-        cartItems.add(new CartItem(4, getProducts().get(3), 1));
-        cartItems.add(new CartItem(5, getProducts().get(4), 2));
-        cartItems.add(new CartItem(6, getProducts().get(5), 2));
+        cartItems.add(new CartItem(1, getProducts().get(0), 3, 1));
+        cartItems.add(new CartItem(2, getProducts().get(1), 1, 1));
+        cartItems.add(new CartItem(3, getProducts().get(2), 0, 2));
+        cartItems.add(new CartItem(4, getProducts().get(3), 1, 2));
+        cartItems.add(new CartItem(5, getProducts().get(4), 2, 3));
+        cartItems.add(new CartItem(6, getProducts().get(5), 2, 3));
 
         List<CartItem> items = new ArrayList<>(cartItems);
         return items;

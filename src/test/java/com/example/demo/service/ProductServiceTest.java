@@ -48,7 +48,7 @@ public class ProductServiceTest {
     private Product newProduct() {
         return Product.builder()
                 .id(sequenceId())
-                .type(ProductType.TEA)
+                .type(ProductType.COFFEE)
                 .name("Green Tea")
                 .price(BigDecimal.valueOf(3.5))
                 .build();

@@ -1,25 +1,9 @@
-------------------------
-product:
-int id;
-string name;
-productType type;
-bigDecimal price;
-------------------------
-cart:
-int id;
-list<CardItem> items;
-int customerId;
-------------------------
-CardItem:
-int productId;
-product product
-int quantity;
-------------------------
-customer:
-int id;
-string name;
-string email;
-------------------------
-order:
-int id;
-cart cart;
+This service provide takeout coffee
+
+Access link:
+    http://localhost:8085/swagger-ui/index.html
+
+Docker commands:
+    mvn clean package
+    docker build -t coffeePlace:latest .
+    docker run -p8085:8085 coffeePlace:latest
