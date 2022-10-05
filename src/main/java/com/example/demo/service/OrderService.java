@@ -15,6 +15,9 @@ import com.example.demo.log.LogInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 import static com.example.demo.utils.Calculate.calculateBones;
 
 @Service
+@Transactional(rollbackFor = {SQLException.class})
 public class OrderService {
     @Value("${service.order.orderDesc}")
     private String desc;

@@ -11,7 +11,9 @@ import com.example.demo.log.LogInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -41,11 +43,17 @@ public class CartService {
         return toCartDto(findCartByCustomerId(customerId));
     }
 
+    @Transactional(rollbackFor = {SQLException.class})
     public CartDto addCartAndItem(int customerId, int productId) {
         LogInfo.logger.info("addCart ", productId);
-        Cart cart = cartRepository.findByCustomerId(customerId).orElseGet(() -> cartRepository.save(Cart.builder().customerId(customerId).items(new HashSet<>()).build()));
+        Cart cart = cartRepository.findByCustomerId(customerId)
+                .orElseGet(() -> cartRepository.save(Cart.builder()
+                        .customerId(customerId)
+                        .items(new HashSet<>())
+                        .build()));
 
-        CartItem newItem = cartItemRepository.save(CartItem.builder().cartId(cart.getId()).product(productService.getProductById(productId)).quantity(1).build());
+        CartItem newItem = cartItemRepository.save(CartItem.builder().
+                cartId(cart.getId()).product(productService.getProductById(productId)).quantity(1).build());
 
         cart.getItems().add(newItem);
 
