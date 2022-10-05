@@ -2,7 +2,6 @@ package com.example.demo.service;
 
 import com.example.demo.dao.entity.Order;
 import com.example.demo.dao.entity.OrderItem;
-import com.example.demo.dao.entity.Product;
 import com.example.demo.dao.repository.OrderItemRepository;
 import com.example.demo.dao.repository.OrderRepository;
 import com.example.demo.dto.OrderDto;
@@ -14,8 +13,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.example.demo.utils.MyComparator.sortMapDesc;
 
 @Service
 public class ReportService {
@@ -43,20 +46,15 @@ public class ReportService {
         Map<String, Integer> map = new HashMap<>();
 
         List<OrderItem> toppings = orderItemRepository.findAllByProduct_Type(ProductType.TOPPINGS);
-        Set<OrderItem> itemSet = new HashSet<>(toppings);
-        itemSet.stream().forEachOrdered(orderItem -> {
+        toppings.stream().collect(Collectors.toSet());
+        toppings.stream().forEach(orderItem -> {
             List<OrderItem> collect = toppings.stream()
                     .filter(s -> s.getProduct().getId().equals(orderItem.getProduct().getId())).collect(Collectors.toList());
-                    map.put(orderItem.getProduct().getName(), collect.stream()
-                    .mapToInt(value -> value.getQuantity()).sum());
+            map.put(orderItem.getProduct().getName(), collect.stream()
+                    .mapToInt(OrderItem::getQuantity).sum());
         });
-        /*for (OrderItem o : itemSet) {
-            quantitySum = toppings.stream()
-                    .filter(s -> s.getProduct().getId().equals(o.getProduct().getId()))
-                    .mapToInt(value -> value.getQuantity()).sum();
-            map.put(o.getProduct().getName(), quantitySum);
-        }*/
-        return map;
+
+        return sortMapDesc(map);
     }
 
     private OrderDto toOrderDto(Order order) {

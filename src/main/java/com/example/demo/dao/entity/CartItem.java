@@ -15,10 +15,10 @@ import java.io.Serializable;
 @Entity(name = "cart_item")
 public class CartItem implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
-
     @OneToOne
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
     private Integer quantity;
     private Integer cartId;

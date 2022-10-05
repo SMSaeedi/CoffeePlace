@@ -35,7 +35,7 @@ public class ProductService {
 
     public Product getProductById(int productId) {
         LogInfo.logger.info("getProductById ", productId);
-        return productRepository.findById(productId).orElseThrow(() -> new NotFoundException("No such product found!"));
+        return productRepository.findById(productId).orElseThrow(() -> new NotFoundException(productNotFound));
     }
 
     public ProductDto newProduct(ProductDto productDto) {
@@ -68,7 +68,7 @@ public class ProductService {
         throw new NotFoundException(productNotFound);
     }
 
-    private ProductDto toProductDto(Product cart) {
-        return mapper.convertValue(cart, ProductDto.class);
+    private ProductDto toProductDto(Product product) {
+        return mapper.convertValue(product, ProductDto.class);
     }
 }

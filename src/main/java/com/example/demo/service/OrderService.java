@@ -9,35 +9,23 @@ import com.example.demo.dao.repository.CartRepository;
 import com.example.demo.dao.repository.OrderItemRepository;
 import com.example.demo.dao.repository.OrderRepository;
 import com.example.demo.dto.OrderDto;
-import com.example.demo.dto.OrderItemDto;
 import com.example.demo.enums.OrderStatus;
-import com.example.demo.enums.ProductType;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.log.LogInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.demo.utils.Calculate.calculateBones;
+
 @Service
 public class OrderService {
-    @Value("${service.order.descTopping}")
-    private String descTopping;
-
     @Value("${service.order.orderDesc}")
     private String desc;
-
-    @Value("${service.order.descDiscount}")
-    private String descDiscount;
-
-    @Value("${service.order.none}")
-    private String noBones;
 
     @Value("${service.order.exception.orderNotFound}")
     private String orderNotFound;
@@ -75,7 +63,9 @@ public class OrderService {
         newOrder.setCustomerId(customerId);
         newOrder.setOrderStatus(OrderStatus.REGISTERED);
 
-        return toOrderDto(orderRepository.save(newOrder));
+        Order order = orderRepository.save(newOrder);
+
+        return toOrderDto(order);
     }
 
     private OrderItem cartItemToOrderItem(CartItem cartItem) {
@@ -113,44 +103,7 @@ public class OrderService {
         throw new NotFoundException(orderItemNotFound);
     }
 
-    private Order calculateBones(OrderDto orderDto) {
-        boolean freeTopping = false;
-        BigDecimal oneFreeTopping = BigDecimal.ZERO;
-        boolean discount = false;
-        BigDecimal discount_25Percent = BigDecimal.ZERO;
-
-        List<OrderItemDto> toppingsList = orderDto.getOrderItems().stream().filter(orderDetails -> orderDetails.getProduct().getType().equals(ProductType.TOPPINGS)).collect(Collectors.toList());
-        Optional<OrderItemDto> minPriceToppingItem = toppingsList.stream().min(Comparator.comparing(cartItemDto -> cartItemDto.getProduct().getPrice()));
-
-        boolean drinksItems = orderDto.getOrderItems().stream().filter(cartItemDto -> cartItemDto.getProduct().getType().equals(ProductType.COFFEE)).collect(Collectors.toList()).size() >= 3;
-        if (drinksItems) {
-            freeTopping = true;
-            oneFreeTopping = orderDto.getTotalAmount().subtract(minPriceToppingItem.get().getProduct().getPrice());
-        }
-
-        if (orderDto.getTotalAmount().compareTo(BigDecimal.valueOf(12)) >= 0) {
-            discount = true;
-            discount_25Percent = orderDto.getTotalAmount().subtract(orderDto.getTotalAmount().multiply(BigDecimal.valueOf(25)).divide(BigDecimal.valueOf(100)));
-        }
-
-        if (freeTopping && discount)
-            if (discount_25Percent.compareTo(oneFreeTopping) >= 0) {
-                orderDto.setTotalAmount(oneFreeTopping);
-                orderDto.setDescription(descTopping);
-            } else if (oneFreeTopping.compareTo(discount_25Percent) >= 0) {
-                orderDto.setTotalAmount(discount_25Percent);
-                orderDto.setDescription(descDiscount);
-            } else
-                orderDto.setDescription(noBones);
-
-        return toOrderEntity(orderDto);
-    }
-
     private OrderDto toOrderDto(Order order) {
         return mapper.convertValue(order, OrderDto.class);
-    }
-
-    private Order toOrderEntity(OrderDto orderDto) {
-        return mapper.convertValue(orderDto, Order.class);
     }
 }

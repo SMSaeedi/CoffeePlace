@@ -14,12 +14,12 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 @Entity(name = "product")
 public class Product implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
+    @Column(unique = true, nullable = false)
     private String name;
     private ProductType type;
     private BigDecimal price;

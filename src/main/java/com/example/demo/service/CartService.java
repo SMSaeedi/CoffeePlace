@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dao.entity.Cart;
 import com.example.demo.dao.entity.CartItem;
+import com.example.demo.dao.entity.Product;
 import com.example.demo.dao.repository.CartItemRepository;
 import com.example.demo.dao.repository.CartRepository;
 import com.example.demo.dto.CartDto;
@@ -19,6 +20,9 @@ public class CartService {
 
     @Value("${service.cart.exception.cartNotFound}")
     String cartNotFound;
+
+    @Value("${service.cartItem.exception.cartItemNotFound}")
+    String cartItemNotFound;
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
@@ -39,17 +43,9 @@ public class CartService {
 
     public CartDto addCartAndItem(int customerId, int productId) {
         LogInfo.logger.info("addCart ", productId);
-        Cart cart = cartRepository.findByCustomerId(customerId)
-                .orElseGet(() -> cartRepository.save(Cart.builder()
-                        .customerId(customerId)
-                        .items(new HashSet<>())
-                        .build()));
+        Cart cart = cartRepository.findByCustomerId(customerId).orElseGet(() -> cartRepository.save(Cart.builder().customerId(customerId).items(new HashSet<>()).build()));
 
-        CartItem newItem = cartItemRepository.save(CartItem.builder()
-                .cartId(cart.getId())
-                .product(productService.getProductById(productId))
-                .quantity(1)
-                .build());
+        CartItem newItem = cartItemRepository.save(CartItem.builder().cartId(cart.getId()).product(productService.getProductById(productId)).quantity(1).build());
 
         cart.getItems().add(newItem);
 
@@ -61,22 +57,21 @@ public class CartService {
     public CartDto updateCartItem(int customerId, int cartItemId, int productId, int quantity) {
         LogInfo.logger.info("updateCart ", cartItemId);
         Cart cart = findCartByCustomerId(customerId);
+        CartItem cartItem = findCartItemById(cartItemId);
+        Product productById = productService.getProductById(productId);
 
-        CartItem item = cart.getItems().stream().filter(cartItem -> cartItem.getId().equals(cartItemId)
-                        && cartItem.getProduct().getId().equals(productId)).findFirst()
-                .orElseGet(() -> cartItemRepository.save(CartItem.builder()
-                        .id(cartItemId)
-                        .cartId(cart.getId())
-                        .product(productService.getProductById(productId))
-                        .quantity(quantity)
-                        .build()));
+        cartItem = cartItemRepository.save(CartItem.builder()
+                .id(cartItemId)
+                .cartId(cart.getId())
+                .product(productById)
+                .quantity(quantity)
+                .build());
 
-        cart.getItems().remove(item);
+        cart.getItems().remove(cartItem);
 
-        if (quantity != 0)
-            item.setQuantity(quantity);
+        if (quantity != 0) cartItem.setQuantity(quantity);
 
-        CartItem updatedCartItem = cartItemRepository.save(item);
+        CartItem updatedCartItem = cartItemRepository.save(cartItem);
         cart.getItems().add(updatedCartItem);
 
         return toCartDto(cart);
@@ -87,12 +82,16 @@ public class CartService {
         return cartRepository.findByCustomerId(customerId).orElseThrow(() -> new NotFoundException(cartNotFound));
     }
 
+    private CartItem findCartItemById(int cartItemId) {
+        LogInfo.logger.info("findCartItemById ");
+        return cartItemRepository.findById(cartItemId).orElseThrow(() -> new NotFoundException(cartItemNotFound));
+    }
+
     public void removeCartItem(int cartItemId) {
         LogInfo.logger.info("removeCartItem ", cartItemId);
         Optional<CartItem> cartItemById = cartItemRepository.findById(cartItemId);
 
-        if (cartItemById.isPresent())
-            cartItemRepository.deleteById(cartItemId);
+        if (cartItemById.isPresent()) cartItemRepository.deleteById(cartItemId);
         throw new NotFoundException(cartNotFound);
     }
 

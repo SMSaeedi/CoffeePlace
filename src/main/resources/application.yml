@@ -40,9 +40,12 @@ service:
   cart:
     exception:
       cartNotFound: No such cart found!
+  cartItem:
+    exception:
+      cartItemNotFound: No such cartItem found!
   product:
       exception:
-        productNotFound: No such product found!
+        productNotFound: Wrong product id found or no such product found!
   customer:
     exception:
       productNotFound: No such customer found!

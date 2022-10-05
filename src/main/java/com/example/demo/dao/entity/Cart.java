@@ -13,14 +13,13 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"customerId"})})
 @Entity(name = "cart")
 public class Cart implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
-
     @OneToMany
     private Set<CartItem> items;
+    @Column(unique = true, nullable = false)
     private Integer customerId;
 }
