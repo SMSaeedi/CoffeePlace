@@ -46,7 +46,6 @@ public class ReportService {
         Map<String, Integer> map = new HashMap<>();
 
         List<OrderItem> toppings = orderItemRepository.findAllByProduct_Type(ProductType.TOPPINGS);
-        toppings.stream().collect(Collectors.toSet());
         toppings.stream().forEach(orderItem -> {
             List<OrderItem> collect = toppings.stream()
                     .filter(s -> s.getProduct().getId().equals(orderItem.getProduct().getId())).collect(Collectors.toList());

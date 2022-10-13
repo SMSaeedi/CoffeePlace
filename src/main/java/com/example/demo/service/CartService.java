@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dao.entity.Cart;
 import com.example.demo.dao.entity.CartItem;
+import com.example.demo.dao.entity.Customer;
 import com.example.demo.dao.entity.Product;
 import com.example.demo.dao.repository.CartItemRepository;
 import com.example.demo.dao.repository.CartRepository;
@@ -26,14 +27,19 @@ public class CartService {
     @Value("${service.cartItem.exception.cartItemNotFound}")
     String cartItemNotFound;
 
+    @Value("${service.customer.exception.customerNotFound}")
+    String customerNotFound;
+
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
+    private final CustomerService customerService;
     private final ProductService productService;
     private final ObjectMapper mapper;
 
-    public CartService(CartRepository cartRepository, CartItemRepository cartItemRepository, ProductService productService, ObjectMapper mapper) {
+    public CartService(CartRepository cartRepository, CartItemRepository cartItemRepository, CustomerService customerService, ProductService productService, ObjectMapper mapper) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
+        this.customerService = customerService;
         this.productService = productService;
         this.mapper = mapper;
     }
@@ -46,6 +52,7 @@ public class CartService {
     @Transactional(rollbackFor = {SQLException.class})
     public CartDto addCartAndItem(int customerId, int productId) {
         LogInfo.logger.info("addCart ", productId);
+        customerService.findCustomerById(customerId).orElseThrow(() -> new NotFoundException(customerNotFound));
         Cart cart = cartRepository.findByCustomerId(customerId)
                 .orElseGet(() -> cartRepository.save(Cart.builder()
                         .customerId(customerId)

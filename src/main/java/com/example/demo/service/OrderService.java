@@ -40,6 +40,15 @@ public class OrderService {
     @Value("${service.cart.exception.cartNotFound}")
     String cartNotFound;
 
+    @Value("${service.order.descTopping}")
+    private static String descTopping;
+
+    @Value("${service.order.descDiscount}")
+    private static String descDiscount;
+
+    @Value("${service.order.none}")
+    private static String noBones;
+
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final CartRepository cartRepository;
@@ -58,23 +67,23 @@ public class OrderService {
         LogInfo.logger.info("createOrder ");
         Cart cart = cartRepository.findByCustomerId(customerId).orElseThrow(() -> new NotFoundException(cartNotFound));
         List<CartItem> cartItems = cartItemRepository.findAllByCartId(cart.getId());
+        List<OrderItem> orderItems = cartItems.stream().map(this::saveCartItemToOrderItem).collect(Collectors.toList());
 
-        List<OrderItem> orderItems = cartItems.stream().map(this::cartItemToOrderItem).collect(Collectors.toList());
-        Order newOrder = calculateBones(toOrderDto(Order.builder()
+        Order newOrder = Order.builder()
                 .orderItems(orderItems)
-                .build()));
-        newOrder.setOrderDate(new Date());
-        newOrder.setCustomerId(customerId);
-        newOrder.setOrderStatus(OrderStatus.REGISTERED);
+                .totalAmount(calculateBones(cart))
+                .customerId(customerId)
+                .orderDate(new Date())
+                .orderStatus(OrderStatus.REGISTERED)
+                .build();
 
         Order order = orderRepository.save(newOrder);
 
         return toOrderDto(order);
     }
 
-    private OrderItem cartItemToOrderItem(CartItem cartItem) {
+    private OrderItem saveCartItemToOrderItem(CartItem cartItem) {
         return orderItemRepository.save(OrderItem.builder()
-                .cartItemId(cartItem.getId())
                 .product(cartItem.getProduct())
                 .quantity(cartItem.getQuantity())
                 .amount(cartItem.getProduct().getPrice())

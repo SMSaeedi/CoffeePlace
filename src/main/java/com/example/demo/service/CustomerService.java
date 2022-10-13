@@ -10,10 +10,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CustomerService {
 
-    @Value("${service.cart.exception.cartNotFound}")
+    @Value("${service.customer.exception.customerNotFound}")
     String customerNotFound;
 
     private final CustomerRepository customerRepository;
@@ -43,6 +45,11 @@ public class CustomerService {
                 .postalAddress(dto.getPostalAddress())
                 .build());
         return toCustomerDto(customer);
+    }
+
+    public Optional<Customer> findCustomerById(int customerId) {
+        LogInfo.logger.info("findCustomerById ", customerId);
+        return customerRepository.findById(customerId);
     }
 
     private CustomerDto toCustomerDto(Customer customer) {
