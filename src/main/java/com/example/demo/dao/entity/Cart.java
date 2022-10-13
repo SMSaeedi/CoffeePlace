@@ -18,7 +18,7 @@ public class Cart implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private Set<CartItem> items;
     @Column(unique = true, nullable = false)
     private Integer customerId;

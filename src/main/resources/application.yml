@@ -29,15 +29,16 @@ server:
 #Other namings
 service:
   order:
-    item:
-      orderItemNotFound: No such order item found!
     descTopping: Congrats! one of your toppings has become a gift
     descDiscount: Congrats! 25% discount has appended
-    none: No bones appended!
     orderDesc: disSatisfactory!
     exception:
       orderNotFound: No such order found!
+    item:
+      exception:
+        orderItemNotFound: No such order item found!
   cart:
+    oneDrinkIsNeeded: You should at least add one drink to the item!
     exception:
       cartNotFound: No such cart found!
   cartItem:

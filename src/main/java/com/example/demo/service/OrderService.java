@@ -8,6 +8,7 @@ import com.example.demo.dao.repository.CartItemRepository;
 import com.example.demo.dao.repository.CartRepository;
 import com.example.demo.dao.repository.OrderItemRepository;
 import com.example.demo.dao.repository.OrderRepository;
+import com.example.demo.dto.OrderDiscount;
 import com.example.demo.dto.OrderDto;
 import com.example.demo.enums.OrderStatus;
 import com.example.demo.exception.NotFoundException;
@@ -21,33 +22,25 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.example.demo.utils.Calculate.calculateBones;
+import static com.example.demo.utils.OrderDiscountCalculation.orderDiscountCal;
 
 @Service
 @Transactional(rollbackFor = {SQLException.class})
 public class OrderService {
     @Value("${service.order.orderDesc}")
-    private String desc;
+    private String cancelOrderDesc;
 
     @Value("${service.order.exception.orderNotFound}")
     private String orderNotFound;
 
-    @Value("${service.order.item.orderItemNotFound}")
+    @Value("${service.order.item.exception.orderItemNotFound}")
     private String orderItemNotFound;
 
     @Value("${service.cart.exception.cartNotFound}")
     String cartNotFound;
-
-    @Value("${service.order.descTopping}")
-    private static String descTopping;
-
-    @Value("${service.order.descDiscount}")
-    private static String descDiscount;
-
-    @Value("${service.order.none}")
-    private static String noBones;
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
@@ -64,14 +57,17 @@ public class OrderService {
     }
 
     public OrderDto createOrder(int customerId) {
-        LogInfo.logger.info("createOrder ");
+        LogInfo.logger.info("createOrder " + customerId);
         Cart cart = cartRepository.findByCustomerId(customerId).orElseThrow(() -> new NotFoundException(cartNotFound));
         List<CartItem> cartItems = cartItemRepository.findAllByCartId(cart.getId());
-        List<OrderItem> orderItems = cartItems.stream().map(this::saveCartItemToOrderItem).collect(Collectors.toList());
+        Set<OrderItem> orderItems = cartItems.stream().map(this::saveCartItemToOrderItem).collect(Collectors.toSet());
+
+        OrderDiscount bonusCalculate = orderDiscountCal(cart);
 
         Order newOrder = Order.builder()
                 .orderItems(orderItems)
-                .totalAmount(calculateBones(cart))
+                .totalAmount(bonusCalculate.getTotalAmount())
+                .description(bonusCalculate.getDescription())
                 .customerId(customerId)
                 .orderDate(new Date())
                 .orderStatus(OrderStatus.REGISTERED)
@@ -109,7 +105,7 @@ public class OrderService {
                     .id(orderId)
                     .orderStatus(OrderStatus.CANCELED)
                     .orderDate(new Date())
-                    .description(desc)
+                    .description(cancelOrderDesc)
                     .build();
             orderRepository.save(canceledOrder);
         }

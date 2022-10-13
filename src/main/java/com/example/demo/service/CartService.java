@@ -1,12 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.dao.entity.Cart;
-import com.example.demo.dao.entity.CartItem;
-import com.example.demo.dao.entity.Customer;
-import com.example.demo.dao.entity.Product;
+import com.example.demo.dao.entity.*;
 import com.example.demo.dao.repository.CartItemRepository;
 import com.example.demo.dao.repository.CartRepository;
 import com.example.demo.dto.CartDto;
+import com.example.demo.enums.ProductType;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.log.LogInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CartService {
@@ -29,6 +30,10 @@ public class CartService {
 
     @Value("${service.customer.exception.customerNotFound}")
     String customerNotFound;
+
+
+    @Value("${service.cart.oneDrinkIsNeeded}")
+    private static String noDrinkItemPicked;
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
@@ -64,9 +69,17 @@ public class CartService {
 
         cart.getItems().add(newItem);
 
+//        isAnyDrinkPicked(cart.getItems());
+
         Cart addNewItem = cartRepository.save(cart);
 
         return toCartDto(addNewItem);
+    }
+
+    private void isAnyDrinkPicked(Set<CartItem> cartItems) {
+        boolean isAnyDrinkPicked = cartItems.stream().filter(orderItem -> orderItem.getProduct().getType().equals(ProductType.COFFEE)).collect(Collectors.toList()).size() == 0;
+        if (isAnyDrinkPicked)
+            throw new NotFoundException(noDrinkItemPicked);
     }
 
     public CartDto updateCartItem(int customerId, int cartItemId, int productId, int quantity) {

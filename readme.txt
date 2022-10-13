@@ -1,4 +1,7 @@
-This service provide takeout coffee
+This is a takeout service which provide ordering at least one coffee with many kind of toppings
+
+H2 access link:
+    http://localhost:8085/coffeePlace
 
 Access link:
     http://localhost:8085/swagger-ui/index.html
