@@ -35,7 +35,7 @@ public class ValidatorTests {
 
         Validator validator = createValidator();
         Set<ConstraintViolation<CustomerDto>> constraintViolations = validator.validate(customer);
-        assertThat(constraintViolations).hasSize(1);
+        assertThat(constraintViolations).hasSize(3);
 
         List<ConstraintViolation<CustomerDto>> list = new ArrayList<>(constraintViolations);
         int i = 0;
@@ -57,10 +57,10 @@ public class ValidatorTests {
 
         Validator validator = createValidator();
         Set<ConstraintViolation<CustomerDto>> constraintViolations = validator.validate(customer);
-        assertThat(constraintViolations).hasSize(3);
+        assertThat(constraintViolations).hasSize(2);
 
         ConstraintViolation<CustomerDto> violation = constraintViolations.iterator().next();
         assertThat(violation.getPropertyPath().toString()).isEqualTo(violation.getPropertyPath().toString());
-        assertThat(violation.getMessage()).isEqualTo("email must be a valid email address");
+        assertThat(violation.getMessage()).isEqualTo("invalid email address");
     }
 }

@@ -10,3 +10,8 @@ Docker commands:
     mvn clean package
     docker build -t coffeePlace:latest .
     docker run -p8085:8085 coffeePlace:latest
+
+Test coverage:
+    Using JaCoCo maven plugin.
+    After building project coverage report will be available here:
+        /target/site/jacoco/index.html
