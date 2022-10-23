@@ -38,8 +38,8 @@ public class CustomerService {
 
     public CustomerDto updateCustomer(int customerId, CustomerDto dto) {
         LogInfo.logger.info("updateCustomer ", dto);
-        Customer findCustomerById = customerRepository.findById(customerId).orElseThrow(() -> new NotFoundException(customerNotFound));
-        Customer customer = customerRepository.save(findCustomerById.builder()
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new NotFoundException(customerNotFound));
+        customerRepository.save(customer.builder()
                 .name(dto.getName())
                 .email(dto.getEmail())
                 .postalAddress(dto.getPostalAddress())
