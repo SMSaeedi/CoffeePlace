@@ -16,6 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -90,6 +91,7 @@ public class ProductServiceTest {
 
     @Test
     public void updateAProduct() {
+        when(productRepository.findById(getProduct().getId())).thenReturn(Optional.of(getProduct()));
         when(productRepository.save(Mockito.any(Product.class))).thenReturn(getProduct());
 
         ProductDto productDto = productService.updateProduct(getProduct().getId(), objectMapper.convertValue(getProduct(), ProductDto.class));

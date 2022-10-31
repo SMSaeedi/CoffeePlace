@@ -85,19 +85,17 @@ public class CartService {
     public CartDto updateCartItem(int customerId, int cartItemId, int productId, int quantity) {
         LogInfo.logger.info("updateCart ", cartItemId);
         Cart cart = findCartByCustomerId(customerId);
-        CartItem cartItem = findCartItemById(cartItemId);
         Product productById = productService.getProductById(productId);
 
-        cartItem = cartItemRepository.save(CartItem.builder()
+        CartItem cartItem = cartItemRepository.save(CartItem.builder()
                 .id(cartItemId)
                 .cartId(cart.getId())
                 .product(productById)
                 .quantity(quantity)
                 .build());
 
-        cart.getItems().remove(cartItem);
-
         if (quantity != 0) cartItem.setQuantity(quantity);
+        else cart.getItems().remove(cartItem);
 
         CartItem updatedCartItem = cartItemRepository.save(cartItem);
         cart.getItems().add(updatedCartItem);

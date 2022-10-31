@@ -40,22 +40,15 @@ public class CustomerServiceTest {
 
     private List<Customer> customers() {
         List<Customer> list = new ArrayList<>();
-        Customer empOne = new Customer(sequenceId(), "Mahsa Saeedi", "mahsasaeedy@gmail.com","Nr.50, Azadi St. Azadi Avenue");
-        Customer empTwo = new Customer(sequenceId(), "Alex Veldaviny", "alexk@yahoo.com","Nr.51, Azadi St. Azadi Avenue");
-        Customer empThree = new Customer(sequenceId(), "Steve Martiny", "swaugh@gmail.com","Nr.52, Azadi St. Azadi Avenue");
+        Customer empOne = new Customer(sequenceId(), "Mahsa Saeedi", "mahsasaeedy@gmail.com", "Nr.50, Azadi St. Azadi Avenue");
+        Customer empTwo = new Customer(sequenceId(), "Alex Veldaviny", "alexk@yahoo.com", "Nr.51, Azadi St. Azadi Avenue");
+        Customer empThree = new Customer(sequenceId(), "Steve Martiny", "swaugh@gmail.com", "Nr.52, Azadi St. Azadi Avenue");
 
         list.add(empOne);
         list.add(empTwo);
         list.add(empThree);
 
         return list;
-    }
-
-    private Customer customer() {
-        for (Customer c : customers())
-            return c;
-
-        return new Customer(sequenceId(), "Nina Mirzaee", "nina_m@email.com","Nr.48, Azadi St. Azadi Avenue");
     }
 
     private int sequenceId() {
@@ -71,11 +64,11 @@ public class CustomerServiceTest {
 
     @Test
     public void createNewCustomer() {
-        when(customerRepository.save(Mockito.any(Customer.class))).thenReturn(customer());
+        when(customerRepository.save(Mockito.any(Customer.class))).thenReturn(customers().get(0));
 
-        TokenDto tokenDto = customerService.registerCustomer(objectMapper.convertValue(customer(), CustomerDto.class));
+        TokenDto tokenDto = customerService.registerCustomer(objectMapper.convertValue(customers().get(0), CustomerDto.class));
 
-        assertEquals(tokenDto.getToken(), customer().getId());
+        assertEquals(tokenDto.getToken(), customers().get(0).getId());
     }
 
     @Test
@@ -88,20 +81,17 @@ public class CustomerServiceTest {
 
     @Test
     public void findCustomerBy_existedId() {
-        when(customerRepository.findById(1)).thenReturn(Optional.of(customer()));
+        when(customerRepository.findById(1)).thenReturn(Optional.of(customers().get(1)));
 
         Optional<Customer> customer = customerRepository.findById(1);
 
-        assertEquals(customer().getName(), customer.get().getName());
-        assertEquals(customer().getEmail(), customer.get().getEmail());
+        assertEquals(customers().get(1).getName(), customer.get().getName());
+        assertEquals(customers().get(1).getEmail(), customer.get().getEmail());
     }
 
     @Test
     public void findCustomerBy_notExistedId() {
-        when(customerRepository.findById(101)).thenReturn(Optional.of(customer()));
-
-        Throwable exception = assertThrows(NotFoundException.class, () -> customerRepository.findById(101));
-        assertEquals(404, ((ResponseStatusException) exception).getStatus().value());
-        assertEquals("NOT_FOUND", ((ResponseStatusException) exception).getStatus().name());
+        Throwable exception = assertThrows(RuntimeException.class, () -> customerRepository.findById(1011111).orElseThrow());
+        assertEquals("No value present", exception.getMessage());
     }
 }

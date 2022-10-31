@@ -61,6 +61,6 @@ public class ValidatorTests {
 
         ConstraintViolation<CustomerDto> violation = constraintViolations.iterator().next();
         assertThat(violation.getPropertyPath().toString()).isEqualTo(violation.getPropertyPath().toString());
-        assertThat(violation.getMessage()).isEqualTo("invalid email address");
+        assertThat(violation.getMessage()).isEqualTo("postalAddress length should be between 10 to 250");
     }
 }

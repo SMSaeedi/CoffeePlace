@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dao.entity.Cart;
 import com.example.demo.dao.entity.CartItem;
+import com.example.demo.dao.entity.Customer;
 import com.example.demo.dao.entity.Product;
 import com.example.demo.dao.repository.CartItemRepository;
 import com.example.demo.dao.repository.CartRepository;
@@ -33,6 +34,9 @@ public class CartServiceTest {
 
     @MockBean
     private ProductService productService;
+
+    @MockBean
+    private CustomerService customerService;
 
     @MockBean
     CartRepository cartRepository;
@@ -75,6 +79,19 @@ public class CartServiceTest {
         return products;
     }
 
+    private List<Customer> customers() {
+        List<Customer> list = new ArrayList<>();
+        Customer empOne = new Customer(sequenceId(), "Mahsa Saeedi", "mahsasaeedy@gmail.com", "Nr.50, Azadi St. Azadi Avenue");
+        Customer empTwo = new Customer(sequenceId(), "Alex Veldaviny", "alexk@yahoo.com", "Nr.51, Azadi St. Azadi Avenue");
+        Customer empThree = new Customer(sequenceId(), "Steve Martiny", "swaugh@gmail.com", "Nr.52, Azadi St. Azadi Avenue");
+
+        list.add(empOne);
+        list.add(empTwo);
+        list.add(empThree);
+
+        return list;
+    }
+
     private List<CartItem> getItems() {
         Set<CartItem> cartItems = new HashSet<>();
 
@@ -111,6 +128,7 @@ public class CartServiceTest {
         when(cartRepository.save(Mockito.any(Cart.class))).thenReturn(cartsModel());
         when(cartItemRepository.save(getItems().get(0))).thenReturn(getItems().get(0));
         when(productService.getProductById(getProducts().get(0).getId())).thenReturn(getProducts().get(0));
+        when(customerService.findCustomerById(customers().get(0).getId())).thenReturn(Optional.of(customers().get(0)));
 
         CartDto cartDto = cartService.addCartAndItem(cartsModel().getCustomerId(), cartsModel().getItems().stream().findFirst().get().getProduct().getId());
 
@@ -122,10 +140,11 @@ public class CartServiceTest {
     public void updateCartForACustomer_increaseQuantity() {
         when(cartRepository.save(Mockito.any(Cart.class))).thenReturn(cartsModel());
         when(cartRepository.findByCustomerId(cartsModel().getCustomerId())).thenReturn(Optional.of(cartsModel()));
+        when(cartItemRepository.save(Mockito.any(CartItem.class))).thenReturn(getItems().get(0));
+        when(productService.getProductById(getProducts().get(0).getId())).thenReturn(getProducts().get(0));
 
         CartDto cartDto = cartService.updateCartItem(cartsModel().getCustomerId(), cartsModel().getItems().stream().findFirst().get().getId(), cartsModel().getItems().stream().findFirst().get().getProduct().getId(), 5);
 
-        assertEquals(cartsModel().getItems().size(), cartDto.getItems().size());
         assertEquals(cartsModel().getItems().stream().findFirst().get().getQuantity(), cartDto.getItems().stream().findFirst().get().getQuantity());
         assertEquals(cartsModel().getItems().stream().findFirst().get().getProduct().getName(), cartDto.getItems().stream().findFirst().get().getProduct().getName());
     }
@@ -134,6 +153,8 @@ public class CartServiceTest {
     public void updateCartForACustomer_zeroQuantity_toRemoveItem() {
         when(cartRepository.save(Mockito.any(Cart.class))).thenReturn(cartsModel());
         when(cartRepository.findByCustomerId(cartsModel().getCustomerId())).thenReturn(Optional.of(cartsModel()));
+        when(cartItemRepository.save(Mockito.any(CartItem.class))).thenReturn(getItems().get(0));
+        when(productService.getProductById(getProducts().get(0).getId())).thenReturn(getProducts().get(0));
 
         CartDto cartDto = cartService.updateCartItem(cartsModel().getCustomerId(), cartsModel().getItems().stream().findFirst().get().getId(), cartsModel().getItems().stream().findFirst().get().getProduct().getId(), 0);
 
