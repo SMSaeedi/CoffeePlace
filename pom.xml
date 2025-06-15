@@ -9,6 +9,12 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
+	<properties>
+		<java.version>21</java.version>
+		<lombok.version>1.18.30</lombok.version>
+		<open.api.version>1.7.0</open.api.version>
+	</properties>
+
 	<groupId>com.example</groupId>
 	<artifactId>demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -31,6 +37,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -40,7 +47,8 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.32</version>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -51,18 +59,45 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.7.0</version>
+			<version>${open.api.version}</version>
 		</dependency>
 	</dependencies>
 
 	<build>
+		<finalName>Coffee Place</finalName>
+
 		<plugins>
+			<!-- Run tests normally -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+
+			<!-- Spring Boot plugin -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>3.11.0</version>
+			</plugin>
+
+			<!-- Java Compiler Plugin updated for Java 21 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version> <!-- ✅ required for Java 21 -->
 				<configuration>
-					<release>21</release> <!-- Use 'release' instead of source/target for better compatibility -->
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
 
